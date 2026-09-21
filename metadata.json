@@ -1,0 +1,6 @@
+{
+  "name": "LingoLive AI",
+  "description": "Real-time conversational AI language partner with CEFR standardized 4-skill mock exams (Listening, Reading, Writing, Speaking), performance analytics, and interactive practice.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
