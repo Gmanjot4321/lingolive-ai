@@ -26,6 +26,11 @@ function getGeminiClient(): GoogleGenAI {
   }
   return new GoogleGenAI({
     apiKey,
+    httpOptions: {
+      headers: {
+        "User-Agent": "aistudio-build",
+      },
+    },
   });
 }
 
@@ -2720,16 +2725,85 @@ interface PendingOtp {
 const pendingOtps = new Map<string, PendingOtp>();
 
 /**
- * Dispatch OTP verification email using configured Gmail / SMTP provider
+ * Dispatch OTP verification email using Brevo REST API or Brevo SMTP Relay
  */
 async function dispatchOtpEmail(toEmail: string, otp: string): Promise<{ success: boolean; error?: string; provider?: string }> {
-  const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
+  const brevoApiKey = process.env.BREVO_API_KEY || process.env.BREVO_KEY || process.env.SENDINBLUE_API_KEY;
+  const brevoSenderEmail = process.env.BREVO_SENDER_EMAIL || process.env.BREVO_FROM_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER || "noreply@lingolive.app";
+  const brevoSenderName = process.env.BREVO_SENDER_NAME || "LingoLive AI";
+
+  const emailHtml = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 28px 24px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: #ec4899; font-size: 24px; font-weight: 800; margin: 0;">LingoLive AI</h1>
+        <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Language Fluency Masterclass</p>
+      </div>
+      <h2 style="font-size: 18px; color: #0f172a; margin-bottom: 12px;">Verify Your Email Address</h2>
+      <p style="color: #475569; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+        Thank you for learning with LingoLive. Please use the 6-digit verification code below to confirm your account:
+      </p>
+      <div style="background: #fdf2f8; border: 2px dashed #f472b6; border-radius: 12px; padding: 18px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #be185d; margin: 0 auto 24px auto;">
+        ${otp}
+      </div>
+      <p style="color: #64748b; font-size: 12px; line-height: 1.4; margin-bottom: 8px;">
+        ⏱ This verification code is valid for <strong>10 minutes</strong>.
+      </p>
+      <p style="color: #94a3b8; font-size: 11px; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+        If you did not request this verification code, you can safely ignore this email.
+      </p>
+    </div>
+  `;
+
+  // 1. Primary: Brevo REST API (Fastest and most reliable)
+  if (brevoApiKey) {
+    try {
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "api-key": brevoApiKey.trim(),
+        },
+        body: JSON.stringify({
+          sender: {
+            name: brevoSenderName,
+            email: brevoSenderEmail,
+          },
+          to: [
+            {
+              email: toEmail,
+            },
+          ],
+          subject: `Your LingoLive Verification Code: ${otp}`,
+          htmlContent: emailHtml,
+          textContent: `Your LingoLive 6-digit verification code is: ${otp}\nThis code will expire in 10 minutes.`,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const errorMsg = data?.message || `Brevo API error status ${response.status}`;
+        console.error("[AUTH EMAIL] Brevo API error:", errorMsg);
+        return { success: false, error: `Brevo error: ${errorMsg}`, provider: "brevo" };
+      }
+
+      console.log(`[AUTH EMAIL] Successfully dispatched OTP email to ${toEmail} via Brevo API (MessageId: ${data?.messageId || "ok"})`);
+      return { success: true, provider: "brevo" };
+    } catch (brevoErr: any) {
+      console.error("[AUTH EMAIL] Failed sending via Brevo API:", brevoErr);
+      return { success: false, error: `Brevo error: ${brevoErr?.message || "Failed to send email."}`, provider: "brevo" };
+    }
+  }
+
+  // 2. Secondary: Brevo SMTP Relay
+  const smtpHost = process.env.SMTP_HOST || "smtp-relay.brevo.com";
+  const smtpUser = process.env.SMTP_USER || process.env.BREVO_SMTP_LOGIN;
+  const smtpPass = process.env.SMTP_PASS || process.env.BREVO_SMTP_KEY;
 
   if (smtpUser && smtpPass) {
     try {
-      const port = parseInt(process.env.SMTP_PORT || "465", 10);
+      const port = parseInt(process.env.SMTP_PORT || "587", 10);
       const isSecure = port === 465 || process.env.SMTP_SECURE === "true";
       const transporter = nodemailer.createTransport({
         host: smtpHost,
@@ -2741,48 +2815,28 @@ async function dispatchOtpEmail(toEmail: string, otp: string): Promise<{ success
         },
       });
 
-      const fromAddress = process.env.SMTP_FROM || `"LingoLive AI" <${smtpUser}>`;
+      const fromAddress = process.env.SMTP_FROM || `"${brevoSenderName}" <${smtpUser}>`;
 
       await transporter.sendMail({
         from: fromAddress,
         to: toEmail,
         subject: `Your LingoLive Verification Code: ${otp}`,
         text: `Your LingoLive 6-digit verification code is: ${otp}\nThis code will expire in 10 minutes.`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 28px 24px; border: 1px solid #e2e8f0; border-radius: 16px; background-color: #ffffff; color: #1e293b;">
-            <div style="text-align: center; margin-bottom: 20px;">
-              <h1 style="color: #ec4899; font-size: 24px; font-weight: 800; margin: 0;">LingoLive AI</h1>
-              <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Language Fluency Masterclass</p>
-            </div>
-            <h2 style="font-size: 18px; color: #0f172a; margin-bottom: 12px;">Verify Your Email Address</h2>
-            <p style="color: #475569; font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
-              Thank you for signing up for LingoLive. Please use the 6-digit verification code below to confirm your account:
-            </p>
-            <div style="background: #fdf2f8; border: 2px dashed #f472b6; border-radius: 12px; padding: 18px; text-align: center; font-size: 32px; font-weight: 800; letter-spacing: 8px; color: #be185d; margin: 0 auto 24px auto;">
-              ${otp}
-            </div>
-            <p style="color: #64748b; font-size: 12px; line-height: 1.4; margin-bottom: 8px;">
-              ⏱ This verification code is valid for <strong>10 minutes</strong>.
-            </p>
-            <p style="color: #94a3b8; font-size: 11px; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 12px;">
-              If you did not request this verification code, you can safely ignore this email.
-            </p>
-          </div>
-        `,
+        html: emailHtml,
       });
-      console.log(`[AUTH EMAIL] Successfully dispatched OTP email to ${toEmail} via Gmail SMTP (${smtpHost})`);
-      return { success: true, provider: "smtp" };
+      console.log(`[AUTH EMAIL] Successfully dispatched OTP email to ${toEmail} via Brevo SMTP (${smtpHost})`);
+      return { success: true, provider: "brevo-smtp" };
     } catch (smtpErr: any) {
-      console.error("[AUTH EMAIL] SMTP error:", smtpErr);
-      return { success: false, error: `SMTP error: ${smtpErr?.message || "Failed to send email."}`, provider: "smtp" };
+      console.error("[AUTH EMAIL] Brevo SMTP error:", smtpErr);
+      return { success: false, error: `Brevo SMTP error: ${smtpErr?.message || "Failed to send email."}`, provider: "brevo-smtp" };
     }
   }
 
-  // Fallback notice if SMTP credentials are not configured
-  console.warn(`[AUTH EMAIL NOTICE] No Gmail SMTP credentials configured for ${toEmail}.`);
+  // Fallback notice if neither Brevo API nor Brevo SMTP credentials are configured
+  console.warn(`[AUTH EMAIL NOTICE] No Brevo API Key (BREVO_API_KEY) or Brevo SMTP credentials configured.`);
   return { 
     success: false, 
-    error: "Gmail SMTP is not configured. Please configure SMTP_USER and SMTP_PASS (Gmail App Password) in Settings to send verification codes." 
+    error: "Brevo email delivery is not configured. Please set BREVO_API_KEY (and optionally BREVO_SENDER_EMAIL) in Settings to send verification codes." 
   };
 }
 
