@@ -83,8 +83,7 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    const langCode = currentLanguage.id.toLowerCase().includes('french') ? 'fr-FR' : 'es-ES';
-    utterance.lang = langCode;
+    utterance.lang = currentLanguage.speechCode || 'es-ES';
     utterance.rate = speechPacing === 'slow' ? 0.8 : 0.95;
     window.speechSynthesis.speak(utterance);
   };
