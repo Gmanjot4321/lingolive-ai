@@ -10,19 +10,16 @@
 Moving beyond traditional flashcards, LingoLive utilizes advanced WebSocket audio streaming and the Gemini API to create an autonomous voice partner that dynamically adapts to a user’s proficiency level, providing instant phonetic feedback, grammatical corrections, and interactive dialogue.
 
 ⚡ Key Highlights & Architecture
-Real-Time Voice Interrogation (WebSockets + Web Audio API): Streams 16kHz raw PCM audio directly from the user's microphone to the backend via WebSockets (server.ts), processing speech dynamically using a custom Gapless Audio Queue (audio.ts) for sub-second, interruptible conversational cadence.
 
-CEFR-Calibrated Pedagogical Engine: Generative prompts and scenario flows are strictly bound to CEFR parameters (A0 to C1) via structured system instructions and progression logic (levelProgression.ts, levelGreetings.ts), adjusting vocabulary complexity and syntax in real-time.
-
-Multimodal Curriculum Generation & Practice Studios: Leverages generative AI as a backend curriculum factory (server.ts) to dynamically synthesize interactive Video Masterclasses, Reading Passages, Mock Exams, and Phonetic Drills on demand.
-
-Aggressive Client-Side Caching & Fault Tolerance: Implements robust in-memory caching layers (ttsAudioCache, wordLookupCache) and multi-model fallback routines (generateContentWithRetryAndFallback) to guarantee high availability and instant UI responsiveness.
-
-Persistent Gamification & Analytics: Tracks study minutes, XP, daily streaks, and CEFR exam histories, persisting state seamlessly between client local storage and Supabase PostgreSQL (progressDatabase.ts, streakManager.ts).
-
-Multimodal Speech Processing: Orchestrates concurrent transcription (gemini-3.5-transcribe), text-to-speech (gemini-3.1-flash-tts-preview), and rapid evaluation pipelines (gemini-3.1-flash-lite) to deliver comprehensive language coaching.
-
+* Real-Time Voice Interrogation (WebSockets + Web Audio API): Streams 16kHz raw PCM audio directly from the user's microphone to the backend via WebSockets (server.ts), processing speech dynamically using a custom Gapless Audio Queue (audio.ts) for sub-second, interruptible conversational cadence.
+* CEFR-Calibrated Pedagogical Engine: Generative prompts and scenario flows are strictly bound to CEFR parameters (A0 to C1) via structured system instructions and progression logic (levelProgression.ts, levelGreetings.ts), adjusting vocabulary complexity and syntax in real-time.
+* Multimodal Curriculum Generation & Practice Studios: Leverages generative AI as a backend curriculum factory (server.ts) to dynamically synthesize interactive Video Masterclasses, Reading Passages, Mock Exams, and Phonetic Drills on demand.
+* Aggressive Client-Side Caching & Fault Tolerance: Implements robust in-memory caching layers (ttsAudioCache, wordLookupCache) and multi-model fallback routines (generateContentWithRetryAndFallback) to guarantee high availability and instant UI responsiveness.
+* Persistent Gamification & Analytics: Tracks study minutes, XP, daily streaks, and CEFR exam histories, persisting state seamlessly between client local storage and Supabase PostgreSQL (progressDatabase.ts, streakManager.ts).
+* Multimodal Speech Processing: Orchestrates concurrent transcription (gemini-3.5-transcribe), text-to-speech (gemini-3.1-flash-tts-preview), and rapid evaluation pipelines (gemini-3.1-flash-lite) to deliver comprehensive language coaching.
+  
 🛠️ Tech Stack & Technologies Used
+
 ### Frontend & Voice UI
 * Core Framework: React 19, TypeScript
 * Build Tooling: Vite, ESBuild
