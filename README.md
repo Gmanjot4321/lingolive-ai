@@ -1,6 +1,7 @@
-# LingoLive AI — Real-Time Conversational Language Tutor 🗣️🌍
+# LingoLive AI — Real-Time Conversational Tutor & CEFR Examiner 🗣️🌍
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-lingolive-ai.onrender.com-success?style=for-the-badge&logo=render)](https://lingolive-ai.onrender.com)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](LICENSE)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/Gmanjot4321/lingolive-ai)
 
 > 🔗 **Live Demo:** [https://lingolive-ai.onrender.com](https://lingolive-ai.onrender.com)
@@ -10,31 +11,41 @@
 Moving beyond traditional flashcards, LingoLive utilizes advanced WebSocket audio streaming and the Gemini API to create an autonomous voice partner that dynamically adapts to a user’s proficiency level, providing instant phonetic feedback, grammatical corrections, and interactive dialogue.
 
 ⚡ Key Highlights & Architecture
+Real-Time Voice Interrogation (WebSockets + Web Audio API): Streams 16kHz raw PCM audio directly from the user's microphone to the backend via WebSockets (server.ts), processing speech dynamically using a custom Gapless Audio Queue (audio.ts) for sub-second, interruptible conversational cadence.
 
-* Real-Time Voice Interrogation (WebSockets + Web Audio API): Streams 16kHz raw PCM audio directly from the user's microphone to the backend via WebSockets (server.ts), processing speech dynamically using a custom Gapless Audio Queue (audio.ts) for sub-second, interruptible conversational cadence.
-* CEFR-Calibrated Pedagogical Engine: Generative prompts and scenario flows are strictly bound to CEFR parameters (A0 to C1) via structured system instructions and progression logic (levelProgression.ts, levelGreetings.ts), adjusting vocabulary complexity and syntax in real-time.
-* Multimodal Curriculum Generation & Practice Studios: Leverages generative AI as a backend curriculum factory (server.ts) to dynamically synthesize interactive Video Masterclasses, Reading Passages, Mock Exams, and Phonetic Drills on demand.
-* Aggressive Client-Side Caching & Fault Tolerance: Implements robust in-memory caching layers (ttsAudioCache, wordLookupCache) and multi-model fallback routines (generateContentWithRetryAndFallback) to guarantee high availability and instant UI responsiveness.
-* Persistent Gamification & Analytics: Tracks study minutes, XP, daily streaks, and CEFR exam histories, persisting state seamlessly between client local storage and Supabase PostgreSQL (progressDatabase.ts, streakManager.ts).
-* Multimodal Speech Processing: Orchestrates concurrent transcription (gemini-3.5-transcribe), text-to-speech (gemini-3.1-flash-tts-preview), and rapid evaluation pipelines (gemini-3.1-flash-lite) to deliver comprehensive language coaching.
-  
+CEFR-Calibrated Pedagogical Engine: Generative prompts and scenario flows are strictly bound to CEFR parameters (A0 to C1) via structured system instructions and progression logic (levelProgression.ts, levelGreetings.ts), adjusting vocabulary complexity and syntax in real-time.
+
+Multimodal Curriculum Generation & Practice Studios: Leverages generative AI as a backend curriculum factory (server.ts) to dynamically synthesize interactive Video Masterclasses, Reading Passages, Mock Exams, and Phonetic Drills on demand.
+
+Aggressive Client-Side Caching & Fault Tolerance: Implements robust in-memory caching layers (ttsAudioCache, wordLookupCache) and multi-model fallback routines (generateContentWithRetryAndFallback) to guarantee high availability and instant UI responsiveness.
+
+Persistent Gamification & Analytics: Tracks study minutes, XP, daily streaks, and CEFR exam histories, persisting state seamlessly between client local storage and Supabase PostgreSQL (progressDatabase.ts, streakManager.ts).
+
+Multimodal Speech Processing: Orchestrates concurrent transcription (gemini-3.5-transcribe), text-to-speech (gemini-3.1-flash-tts-preview), and rapid evaluation pipelines (gemini-3.1-flash-lite) to deliver comprehensive language coaching.
+
 🛠️ Tech Stack & Technologies Used
+Frontend & Voice UI
+Core Framework: React 19, TypeScript
 
-### Frontend & Voice UI
-* Core Framework: React 19, TypeScript
-* Build Tooling: Vite, ESBuild
-* Styling & Design System: Tailwind CSS v4, Custom Neumorphic Glassmorphism
-* Motion & Animation: Framer Motion (motion-dom)
-* Audio Engineering: Web Audio API, ScriptProcessorNode, Custom PCM to Base64 Encoders
+Build Tooling: Vite, ESBuild
 
-### Backend & AI Infrastructure
-* Runtime & Server: Node.js, Express.js
-* WebSocket Server: ws (Real-time bidirectional audio streaming)
-* AI Engine: Google GenAI SDK (@google/genai)
-* Database & Auth: Supabase (PostgreSQL), Brevo SMTP Email Integration for OTP Verification
-* Local Storage Layer: File-system JSON persistence (user_profiles.json, user_accounts.json)
+Styling & Design System: Tailwind CSS v4, Custom Neumorphic Glassmorphism
 
-📁 System Architecture Overview
+Motion & Animation: Framer Motion (motion-dom)
+
+Audio Engineering: Web Audio API, ScriptProcessorNode, Custom PCM to Base64 Encoders
+
+Backend & AI Infrastructure
+Runtime & Server: Node.js, Express.js
+
+WebSocket Server: ws (Real-time bidirectional audio streaming)
+
+AI Engine: Google GenAI SDK (@google/genai)
+
+Database & Auth: Supabase (PostgreSQL), Brevo SMTP Email Integration for OTP Verification
+
+Local Storage Layer: File-system JSON persistence (user_profiles.json, user_accounts.json)
+
 lingolive-ai/
 ├── server.ts                  # Express server: WebSocket audio streaming & GenAI orchestration
 ├── supabase_schema.sql        # PostgreSQL table layout for profiles and exam records
