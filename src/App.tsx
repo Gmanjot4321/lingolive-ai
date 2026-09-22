@@ -21,6 +21,7 @@ import {
   PracticeScenario,
   ProficiencyLevel,
   ChatMessage,
+  ReplyOption,
   SavedWord,
   SessionReport,
   ConversationMode,
@@ -134,14 +135,31 @@ export default function App() {
     scenario: PracticeScenario
   ): ChatMessage => {
     const langGreetings = LEVEL_GREETINGS[lang.id] || LEVEL_GREETINGS['spanish'];
-    const levelData = langGreetings?.[level] || langGreetings?.['A0 - Absolute Beginner (Zero Knowledge)'] || langGreetings?.['B1 - Intermediate'];
+    const levelData =
+      langGreetings?.[level] ||
+      langGreetings?.['A0 - Absolute Beginner (Zero Knowledge)'] ||
+      langGreetings?.['A1 - Beginner'] ||
+      langGreetings?.['B1 - Intermediate'];
+
+    const starters = levelData?.suggestedStarters || [lang.samplePhrase];
+    const replyOptions: ReplyOption[] = starters.map((reply, idx) => ({
+      text: reply,
+      translation: idx === 0 ? 'Natural greeting / response' : 'Alternative conversational response',
+      isCorrect: idx === 0,
+      explanation:
+        idx === 0
+          ? `Natural, contextually appropriate response in ${lang.name}.`
+          : `Alternative phrasing option for ${lang.name}.`,
+    }));
+
     return {
-      id: `welcome-${Date.now()}`,
+      id: `welcome-${lang.id}-${Date.now()}`,
       role: 'partner',
       text: levelData?.text || lang.samplePhrase,
       translation: levelData?.translation || lang.sampleTranslation,
       phonetic: levelData?.phonetic,
-      suggestedReplies: levelData?.suggestedStarters || scenario.suggestedStarters,
+      suggestedReplies: starters,
+      replyOptions,
       timestamp: new Date(),
     };
   };
@@ -338,7 +356,7 @@ export default function App() {
     } catch (e) {
       console.error('Failed to persist chat messages:', e);
     }
-  }, [messages, currentLanguage.id, currentScenario.id, proficiencyLevel]);
+  }, [messages]);
 
   // Load existing conversation or start calibrated greeting when language, proficiency, or scenario changes
   useEffect(() => {
@@ -353,13 +371,23 @@ export default function App() {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setMessages(
-            parsed.map((m: any) => ({
-              ...m,
-              timestamp: m.timestamp ? new Date(m.timestamp) : new Date(),
-            }))
-          );
-          return;
+          const firstMsg = parsed[0];
+          const isSpanishLeak =
+            currentLanguage.id !== 'spanish' &&
+            typeof firstMsg?.text === 'string' &&
+            (firstMsg.text.includes('¡Hola') || firstMsg.text.includes('español'));
+
+          if (!isSpanishLeak) {
+            setMessages(
+              parsed.map((m: any) => ({
+                ...m,
+                timestamp: m.timestamp ? new Date(m.timestamp) : new Date(),
+              }))
+            );
+            return;
+          } else {
+            localStorage.removeItem(storageKey);
+          }
         }
       }
     } catch (e) {
@@ -370,6 +398,65 @@ export default function App() {
     const initialMsg = createInitialWelcomeMessage(currentLanguage, proficiencyLevel, currentScenario);
     setMessages([initialMsg]);
   }, [currentLanguage.id, proficiencyLevel, currentScenario.id]);
+
+  // Dedicated handler when user selects a target language
+  const handleSelectLanguage = (lang: LanguageOption) => {
+    if (lang.id === currentLanguage.id) return;
+
+    setCurrentLanguage(lang);
+    localStorage.setItem(STORAGE_LAST_LANG, lang.id);
+
+    const personas = PARTNER_PERSONAS[lang.id] || PARTNER_PERSONAS['spanish'];
+    const matchingPersona = personas.find((p) => p.id === lang.defaultPartner) || personas[0];
+    setCurrentPersona(matchingPersona);
+
+    setPronunciationDrillText(lang.samplePhrase);
+
+    // Synchronize User Profile targetLanguage
+    if (userProfile) {
+      const updatedProfile: UserProfile = {
+        ...userProfile,
+        targetLanguage: lang.name,
+      };
+      setUserProfile(updatedProfile);
+      saveUserProfileToDb(updatedProfile);
+    }
+
+    // Load clean target language conversation or create fresh greeting
+    const storageKey = getChatStorageKey(lang.id, currentScenario.id, proficiencyLevel);
+    let loaded: ChatMessage[] | null = null;
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const firstMsg = parsed[0];
+          const isSpanishLeak =
+            lang.id !== 'spanish' &&
+            typeof firstMsg?.text === 'string' &&
+            (firstMsg.text.includes('¡Hola') || firstMsg.text.includes('español'));
+
+          if (!isSpanishLeak) {
+            loaded = parsed.map((m: any) => ({
+              ...m,
+              timestamp: m.timestamp ? new Date(m.timestamp) : new Date(),
+            }));
+          } else {
+            localStorage.removeItem(storageKey);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to read target language chat history:', e);
+    }
+
+    if (loaded && loaded.length > 0) {
+      setMessages(loaded);
+    } else {
+      const initialMsg = createInitialWelcomeMessage(lang, proficiencyLevel, currentScenario);
+      setMessages([initialMsg]);
+    }
+  };
 
   // Reset/Clear conversation handler
   const handleResetChat = () => {
@@ -717,7 +804,7 @@ export default function App() {
         activeView={activeView}
         onSelectView={(view) => setActiveView(view)}
         currentLanguage={currentLanguage}
-        onSelectLanguage={(lang) => setCurrentLanguage(lang)}
+        onSelectLanguage={handleSelectLanguage}
         currentPersona={currentPersona}
         onSelectPersona={(persona) => setCurrentPersona(persona)}
         proficiencyLevel={proficiencyLevel}
