@@ -138,23 +138,6 @@ Each language ships with a dedicated AI partner persona, native sample phrases, 
 
 ---
 
-## 🚀 Getting Started
-
-```bash
-# Install dependencies
-bun install   # or npm install
-
-# Configure environment variables (see below)
-cp .env.example .env
-
-# Run in development
-bun run dev
-
-# Build and run in production
-bun run build
-bun run start
-```
-
 
 ## 📦 Deployment
 
