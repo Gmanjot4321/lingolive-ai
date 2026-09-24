@@ -1,6 +1,5 @@
 -- ==============================================================================
 -- LingoLive AI: Supabase Database Schema
--- Run this script in the Supabase SQL Editor (Dashboard > SQL Editor > New Query)
 -- ==============================================================================
 
 -- 1. Create user_profiles table
@@ -30,6 +29,12 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Explicit Grants for user_profiles
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_profiles TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_profiles TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_profiles TO service_role;
+
+
 -- 2. Create saved_vocabulary table
 CREATE TABLE IF NOT EXISTS public.saved_vocabulary (
   id TEXT PRIMARY KEY,
@@ -43,6 +48,12 @@ CREATE TABLE IF NOT EXISTS public.saved_vocabulary (
   language TEXT DEFAULT 'Spanish',
   saved_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Explicit Grants for saved_vocabulary
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.saved_vocabulary TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.saved_vocabulary TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.saved_vocabulary TO service_role;
+
 
 -- 3. Create exam_history table
 CREATE TABLE IF NOT EXISTS public.exam_history (
@@ -58,6 +69,12 @@ CREATE TABLE IF NOT EXISTS public.exam_history (
   speaking_score NUMERIC DEFAULT 0,
   completed_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.exam_history TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.exam_history TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.exam_history TO service_role;
+
 
 -- Create performance indexes
 CREATE INDEX IF NOT EXISTS idx_user_profiles_email ON public.user_profiles (email);
