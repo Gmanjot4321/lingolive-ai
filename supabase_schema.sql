@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS public.user_profiles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Explicit Grants for user_profiles
+
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_profiles TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_profiles TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.user_profiles TO service_role;
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS public.exam_history (
   completed_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-
+-- Explicit Grants for exam_history
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.exam_history TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.exam_history TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.exam_history TO service_role;
@@ -87,18 +87,21 @@ ALTER TABLE public.saved_vocabulary ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.exam_history ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read/write access for application clients
+DROP POLICY IF EXISTS "Allow public read-write for user_profiles" ON public.user_profiles;
 CREATE POLICY "Allow public read-write for user_profiles"
   ON public.user_profiles
   FOR ALL
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow public read-write for saved_vocabulary" ON public.saved_vocabulary;
 CREATE POLICY "Allow public read-write for saved_vocabulary"
   ON public.saved_vocabulary
   FOR ALL
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow public read-write for exam_history" ON public.exam_history;
 CREATE POLICY "Allow public read-write for exam_history"
   ON public.exam_history
   FOR ALL
