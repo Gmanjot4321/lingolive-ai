@@ -19,7 +19,7 @@ Rather than static lessons, LingoLive AI generates scenarios, exams, stories, an
 * **Resilient Multi-Model AI Layer:** A custom retry-and-fallback wrapper cycles through multiple Gemini text models on rate limits or high-demand errors, so generation stays reliable under load.
 * **Gamified Retention Loop:** A streak manager with daily check-ins, streak freezes, milestone rewards, and celebration modals to keep learners coming back.
 * **Persistent Learner Profiles:** Supabase (PostgreSQL) stores user profiles, saved vocabulary, and exam history, with email/OTP-based authentication handled server-side.
-* **Text-to-Speech & Transcription:** Server-side endpoints for TTS playback of AI responses and transcription of learner speech, so every practice mode can be fully voice-driven.
+* **Text-to-Speech & Transcription:** A server-side TTS endpoint for AI response playback (`POST /api/tts`); voice input in the practice modes goes through the browser Web Speech API, with a server-side `/api/transcribe` endpoint available.
 
 ---
 
@@ -123,8 +123,8 @@ All AI generation and account logic runs server-side so the Gemini API key is ne
 | `POST /api/generate-story` | Level-appropriate AI-generated stories |
 | `POST /api/generate-phonetics-drill` | Phonetics practice drills |
 | `POST /api/generate-video-masterclass` | AI video-style teaching content |
-| `POST /api/generate-reading-passage` / `listening-scenario` / `speaking-prompt` / `writing-prompt` | Per-skill practice content generation |
-| `POST /api/auth/send-otp` / `verify-otp-and-signup` / `signup` / `signin` | Email OTP authentication flow |
+| `POST /api/generate-reading-passage` / `/api/generate-listening-scenario` / `/api/generate-speaking-prompt` / `/api/generate-writing-prompt` | Per-skill practice content generation |
+| `POST /api/auth/send-otp` / `/api/auth/verify-otp-and-signup` / `/api/auth/signup` / `/api/auth/signin` | Email OTP authentication flow |
 | `GET/POST /api/profile` | Learner profile read/write |
 | `WS /ws/live` | Real-time live voice conversation session |
 
@@ -138,6 +138,52 @@ Each language ships with a dedicated AI partner persona, native sample phrases, 
 
 ---
 
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+* Node.js 18+ (or [Bun](https://bun.sh))
+* A Google Gemini API key — get one free at [Google AI Studio](https://aistudio.google.com/apikey)
+* (Optional) A Supabase project for persistent profiles, saved vocabulary, and exam history
+* (Optional) A Brevo account for OTP signup emails
+
+### 1. Install dependencies
+
+```bash
+npm install        # or: bun install
+```
+
+### 2. Configure environment variables
+
+Copy the example file and fill in your keys:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `GEMINI_API_KEY` | ✅ Yes | Powers all AI generation, live voice, TTS, and transcription |
+| `SUPABASE_URL` / `VITE_SUPABASE_URL` | No | Enables persistent profiles, saved vocabulary, exam history |
+| `SUPABASE_SERVICE_ROLE_KEY` (or `SUPABASE_ANON_KEY`) | No | Server-side Supabase access |
+| `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | No | Client-side Supabase access |
+| `BREVO_API_KEY` (or `BREVO_KEY` / `SENDINBLUE_API_KEY`) | No | Sends OTP signup emails (falls back to Brevo SMTP relay) |
+| `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME` | No | Sender identity for OTP emails |
+
+Without Supabase or Brevo configured, the app still runs in guest mode with a local JSON profile store — those features degrade gracefully.
+
+### 3. Run it
+
+```bash
+npm run dev     # dev server at http://localhost:3000 (tsx + Vite)
+npm run build   # production bundle -> dist/
+npm start       # serve the production build (node dist/server.cjs)
+```
+
+A single Express process serves the Vite frontend, the API, and the WebSocket backend on port `3000`.
+
+---
 
 ## 📦 Deployment
 
