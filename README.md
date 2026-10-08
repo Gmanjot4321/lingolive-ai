@@ -1,4 +1,4 @@
-# LingoLive AI — Real-Time AI Language Learning Partner 🗣️🌍
+# LingoLive AI — Real-Time AI Language Learning Partner
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-lingolive--ai.onrender.com-success?style=for-the-badge&logo=render)](https://lingolive-ai.onrender.com)
 
@@ -10,7 +10,7 @@ Rather than static lessons, LingoLive AI generates scenarios, exams, stories, an
 
 ---
 
-## ⚡ Key Highlights & Architecture
+## Key Highlights & Architecture
 
 * **Live Voice Conversation Partner:** A WebSocket-driven (`/ws/live`) real-time voice session powered by Gemini's live audio model, letting learners hold a spoken conversation with an AI partner instead of typing.
 * **CEFR-Aligned Progression System:** Learners move through six proficiency levels (A0 to C1), unlocking new levels through promotion exams and required practice counts tracked per level.
@@ -23,7 +23,7 @@ Rather than static lessons, LingoLive AI generates scenarios, exams, stories, an
 
 ---
 
-## 🛠️ Tech Stack & Technologies Used
+## Tech Stack & Technologies Used
 
 ### Frontend
 * **Core Framework:** React 19, TypeScript
@@ -41,7 +41,7 @@ Rather than static lessons, LingoLive AI generates scenarios, exams, stories, an
 
 ---
 
-## 📁 Comprehensive System Architecture
+## Comprehensive System Architecture
 
 ```text
 lingolive-ai/
@@ -105,7 +105,7 @@ lingolive-ai/
 
 ---
 
-## 🔌 API Surface (Express Server)
+##  API Surface (Express Server)
 
 All AI generation and account logic runs server-side so the Gemini API key is never exposed to the client.
 
@@ -130,7 +130,7 @@ All AI generation and account logic runs server-side so the Gemini API key is ne
 
 ---
 
-## 🌐 Supported Languages
+## Supported Languages
 
 Spanish · French · Japanese · German · Italian · Mandarin Chinese · Portuguese · Korean · English
 
@@ -139,7 +139,7 @@ Each language ships with a dedicated AI partner persona, native sample phrases, 
 ---
 
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
