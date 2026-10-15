@@ -43,7 +43,6 @@ import { ListeningPracticeView } from './practice/ListeningPracticeView';
 import { SpeakingPracticeView } from './practice/SpeakingPracticeView';
 import { WritingPracticeView } from './practice/WritingPracticeView';
 import { PhoneticsStudioView } from './practice/PhoneticsStudioView';
-import { VideoTeachingStudioView } from './practice/VideoTeachingStudioView';
 import { SkillIncrement } from '../utils/streakManager';
 
 interface LearningHubViewProps {
@@ -380,8 +379,7 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
   onOpenVoiceChat,
   onOpenStreakModal,
 }) => {
-  // Navigation Tabs
-  const [activeTab, setActiveTab] = useState<'stories' | 'phonetics' | 'reading' | 'listening' | 'speaking' | 'writing' | 'video' | 'sprint' | 'daily' | 'tiers'>('stories');
+  const [activeTab, setActiveTab] = useState<'stories' | 'phonetics' | 'reading' | 'listening' | 'speaking' | 'writing' | 'sprint' | 'daily' | 'tiers'>('stories');
   const [selectedStory, setSelectedStory] = useState<CEFRStory | null>(null);
   const [dailyWordSaved, setDailyWordSaved] = useState(false);
 
@@ -660,17 +658,6 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
           <span>Phonetics Studio</span>
         </button>
 
-        <button
-          onClick={() => setActiveTab('video')}
-          className={`flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
-            activeTab === 'video'
-              ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_15px_rgba(236,72,153,0.4)]'
-              : 'text-slate-300 hover:text-white hover:bg-white/10'
-          }`}
-        >
-          <GraduationCap className="w-3.5 h-3.5 text-pink-300" />
-          <span>Masterclass Studio</span>
-        </button>
 
         <button
           onClick={() => setActiveTab('reading')}
@@ -819,28 +806,28 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
               <div
                 key={story.id}
                 onClick={() => setSelectedStory(story)}
-                className="glass-card-neon border border-pink-500/25 hover:border-pink-400/60 rounded-3xl p-5 shadow-xl hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] transition-all cursor-pointer flex flex-col justify-between group"
+                className="glass-card-neon border border-pink-500/25 hover:border-pink-400/60 rounded-3xl p-5 shadow-xl hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] transition-all cursor-pointer flex flex-col justify-between group min-w-0 max-w-full overflow-hidden break-words"
               >
-                <div>
+                <div className="min-w-0 w-full">
                   <div className="flex items-center justify-between">
-                    <span className="text-3xl p-2 rounded-2xl bg-white/[0.08] border border-white/10">
+                    <span className="text-3xl p-2 rounded-2xl bg-white/[0.08] border border-white/10 shrink-0">
                       {story.coverEmoji}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-pink-500/25 border border-pink-400/40 text-[11px] font-bold text-pink-300">
+                    <span className="px-2.5 py-0.5 rounded-full bg-pink-500/25 border border-pink-400/40 text-[11px] font-bold text-pink-300 shrink-0">
                       {story.cefrLevel.split(' - ')[0]}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-black text-white mt-3 group-hover:text-pink-300 transition-colors">
+                  <h3 className="text-base font-black text-white mt-3 group-hover:text-pink-300 transition-colors break-words line-clamp-2">
                     {story.title}
                   </h3>
-                  <p className="text-xs text-pink-200/70">{story.englishTitle}</p>
-                  <p className="text-xs text-slate-300 mt-2 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-pink-200/70 break-words line-clamp-1">{story.englishTitle}</p>
+                  <p className="text-xs text-slate-300 mt-2 line-clamp-2 leading-relaxed break-words">
                     {story.summary}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs shrink-0">
                   <span className="text-slate-300 flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5 text-cyan-300" />
                     {story.durationMinutes} min read
@@ -862,18 +849,6 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
           currentLanguage={currentLanguage}
           proficiencyLevel={proficiencyLevel}
           onAwardXP={(xp) => onAwardXP(xp, 'speaking')}
-        />
-      )}
-
-      {/* TAB: AUDIO TEACHING MASTERCLASSES */}
-      {activeTab === 'video' && (
-        <VideoTeachingStudioView
-          currentLanguage={currentLanguage}
-          proficiencyLevel={proficiencyLevel}
-          onAwardXP={(xp) => onAwardXP(xp, 'listening')}
-          onOpenWordLookup={onOpenWordLookup}
-          onSaveWord={(word) => onSaveWord(word)}
-          onOpenVoiceChat={onOpenVoiceChat}
         />
       )}
 
