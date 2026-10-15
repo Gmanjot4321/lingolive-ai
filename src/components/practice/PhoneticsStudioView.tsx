@@ -443,8 +443,10 @@ export const PhoneticsStudioView: React.FC<PhoneticsStudioViewProps> = ({
       return;
     }
 
+    setStatusMessage(`Generating authentic ${typeToUse.replace('_', ' ')} drills for ${currentLanguage.name}...`);
+
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4500);
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
 
     try {
       const res = await fetch('/api/generate-phonetics-drill', {
@@ -467,7 +469,7 @@ export const PhoneticsStudioView: React.FC<PhoneticsStudioViewProps> = ({
           setCurrentDrillSet(data.drillSet);
           setActiveDrillIndex(0);
           setDrillFeedback({});
-          setStatusMessage(`Generated ${data.drillSet.drills.length} drills for ${currentLanguage.name}!`);
+          setStatusMessage(`✨ Generated ${data.drillSet.drills.length} drills for ${currentLanguage.name}!`);
           onAwardXP(20);
           return;
         }
