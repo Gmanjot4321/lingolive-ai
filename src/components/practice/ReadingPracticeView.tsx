@@ -290,10 +290,10 @@ export const ReadingPracticeView: React.FC<ReadingPracticeViewProps> = ({
     if (!topicToUse || isGenerating) return;
 
     setIsGenerating(true);
-    setFeedbackMsg(null);
+    setFeedbackMsg(`Crafting authentic reading passage in ${currentLanguage.name}...`);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5500);
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
 
     try {
       const res = await fetch('/api/generate-reading-passage', {
@@ -303,6 +303,7 @@ export const ReadingPracticeView: React.FC<ReadingPracticeViewProps> = ({
         body: JSON.stringify({
           targetLanguage: currentLanguage.name,
           proficiencyLevel,
+          customTopic: topicToUse,
           topic: topicToUse,
         }),
       });
@@ -318,7 +319,7 @@ export const ReadingPracticeView: React.FC<ReadingPracticeViewProps> = ({
           setQuizAnswers({});
           setIsSubmitted(false);
           setShowTranslation(false);
-          setFeedbackMsg(`Generated: "${data.passage.title}"`);
+          setFeedbackMsg(`✨ Generated fresh passage: "${data.passage.title}"`);
           onAwardXP(30);
           return;
         }
