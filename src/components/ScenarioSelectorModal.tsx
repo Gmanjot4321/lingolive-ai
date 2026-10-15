@@ -101,10 +101,23 @@ export const ScenarioSelectorModal: React.FC<ScenarioSelectorModalProps> = ({
     return matchesCategory && matchesSearch;
   });
 
+  const SURPRISE_SCENARIO_PROMPTS = [
+    'Secret underground jazz club password & cocktail ordering',
+    'Artisanal bakery morning rush ordering warm croissants & fresh baguettes',
+    'Vintage flea market bargaining for an antique brass clock',
+    'Boutique vineyard wine tasting and discovering terroir notes',
+    'Emergency late-night pharmacy consultation for a sudden allergy',
+    'Checking into a historic canal-side bed & breakfast in the old quarter',
+    'Booking a scenic panoramic train through alpine mountain villages',
+    'Impromptu invitation to a local neighborhood rooftop tapas party',
+    'Lost wallet at an iconic museum and inquiring at the lost & found',
+    'Chef table consultation asking for the seasonal tasting surprise',
+  ];
+
   // Call AI Backend to Generate any scenario imaginable on demand
   const handleGenerateAIScenario = async (promptTopic?: string) => {
-    const topicToUse = (promptTopic || customTopic).trim();
-    if (!topicToUse && !promptTopic) return;
+    const randomSurprise = SURPRISE_SCENARIO_PROMPTS[Math.floor(Math.random() * SURPRISE_SCENARIO_PROMPTS.length)];
+    const topicToUse = (promptTopic || customTopic || randomSurprise).trim();
 
     setIsGeneratingAI(true);
     setGenerationError(null);
@@ -114,7 +127,7 @@ export const ScenarioSelectorModal: React.FC<ScenarioSelectorModalProps> = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          topic: topicToUse || 'Immersive city dialogue',
+          topic: topicToUse,
           category: selectedCategory !== 'All' ? selectedCategory : 'Social',
           targetLanguage: currentLanguage?.name || 'French',
           nativeLanguage: 'English',
@@ -228,7 +241,10 @@ export const ScenarioSelectorModal: React.FC<ScenarioSelectorModalProps> = ({
 
           {/* Random Surprise Me AI Button */}
           <button
-            onClick={() => handleGenerateAIScenario()}
+            onClick={() => {
+              const surprise = SURPRISE_SCENARIO_PROMPTS[Math.floor(Math.random() * SURPRISE_SCENARIO_PROMPTS.length)];
+              handleGenerateAIScenario(surprise);
+            }}
             disabled={isGeneratingAI}
             className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-pink-500/20 to-purple-600/20 hover:from-pink-500/30 hover:to-purple-600/30 border border-pink-500/40 text-xs font-bold text-pink-200 flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer disabled:opacity-50 shrink-0"
             title="Generate a fresh, unique scenario via AI"
