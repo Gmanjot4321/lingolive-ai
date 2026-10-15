@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 import { WebSocketServer, WebSocket } from "ws";
-import { GoogleGenAI, Modality, Type } from "@google/genai";
+import { GoogleGenAI, Modality, Type, ThinkingLevel } from "@google/genai";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
 import { createServer as createViteServer } from "vite";
@@ -423,6 +423,7 @@ Generate:
       contents: [{ role: "user", parts: [{ text: "Generate scenario now." }] }],
       config: {
         systemInstruction: systemPrompt,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -1320,109 +1321,225 @@ app.post("/api/generate-story", async (req, res) => {
       cefrLevel = "B1",
       genre = "Adventure & Discovery",
       customPrompt = "",
-      length = "standard", // short, standard, long
+      length = "short", // default to punchy, fast 3-paragraph story
     } = req.body;
 
     const ai = getGeminiClient();
-    const systemPrompt = `You are a master storyteller and CEFR language education specialist.
-Create an engaging, culturally authentic, graded short story in ${targetLanguage} calibrated strictly to CEFR ${cefrLevel}.
+    const systemPrompt = `You are a master foreign language storyteller and CEFR curriculum expert.
+Write a concise, engaging, culturally authentic short story in ${targetLanguage} calibrated strictly to CEFR ${cefrLevel}.
 Genre: ${genre}
-User Specific Theme/Idea: ${customPrompt || "Create an intriguing, memorable narrative with rich character motivation."}
-Story Length: ${length === "short" ? "3 short paragraphs" : length === "long" ? "6 paragraphs" : "4-5 balanced paragraphs"}.
+Theme/Topic: ${customPrompt || "A captivating cultural adventure with relatable human dialogue."}
+Length: Exactly 3 short, vivid paragraphs (each 2-3 sentences).
 
-Requirements:
-1. Title in ${targetLanguage} and English translation.
-2. An appropriate emoji for the cover.
-3. Summary in English (1-2 sentences).
-4. Paragraphs array: each item must have 'paragraphNumber', 'targetText' (in ${targetLanguage}), and 'englishTranslation' (in natural English).
-5. Highlighted Vocabulary array: exactly 5-8 key vocabulary words from the story with word, phonetic transcription, partOfSpeech, englishTranslation, and context.
-6. Comprehension Quiz array: exactly 3 multiple-choice questions in ${targetLanguage} testing understanding. Each question has 'id', 'question', 4 'options', 'correctAnswer' (0-indexed number), and 'explanation' in English.
-7. Estimated read time in minutes (2-6) and XP reward (80-150).`;
+Generate a complete JSON object:
+1. title: Engaging story title in ${targetLanguage}
+2. englishTitle: Natural English title translation
+3. coverEmoji: Single relevant emoji
+4. summary: 1-sentence English summary
+5. durationMinutes: 3
+6. xpReward: 100
+7. paragraphs: Array of exactly 3 paragraphs with:
+   - paragraphNumber: 1, 2, 3
+   - targetText: Authentic narrative in ${targetLanguage}
+   - englishTranslation: Natural English translation
+8. keyVocabulary: Exactly 4 key vocabulary words with:
+   - word: Target word
+   - phonetic: IPA or pronunciation guide
+   - englishTranslation: English meaning
+   - partOfSpeech: noun, verb, adjective, etc.
+9. comprehensionQuiz: Exactly 3 multiple-choice questions in English or ${targetLanguage} with:
+   - question: Question text
+   - options: Array of 4 choices
+   - correctAnswer: 0, 1, 2, or 3 (0-indexed integer)
+   - explanation: 1-sentence English explanation`;
 
-    const response = await generateContentWithRetryAndFallback(ai, {
-      contents: [{ role: "user", parts: [{ text: "Generate story now." }] }],
-      config: {
-        systemInstruction: systemPrompt,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            title: { type: Type.STRING },
-            englishTitle: { type: Type.STRING },
-            coverEmoji: { type: Type.STRING },
-            cefrLevel: { type: Type.STRING },
-            summary: { type: Type.STRING },
-            durationMinutes: { type: Type.NUMBER },
-            xpReward: { type: Type.NUMBER },
-            paragraphs: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  paragraphNumber: { type: Type.NUMBER },
-                  targetText: { type: Type.STRING },
-                  englishTranslation: { type: Type.STRING },
+    const genPromise = generateContentWithRetryAndFallback(
+      ai,
+      {
+        contents: [{ role: "user", parts: [{ text: `Create a 3-paragraph CEFR ${cefrLevel} story in ${targetLanguage} about: ${customPrompt || genre}.` }] }],
+        config: {
+          systemInstruction: systemPrompt,
+          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              englishTitle: { type: Type.STRING },
+              coverEmoji: { type: Type.STRING },
+              summary: { type: Type.STRING },
+              durationMinutes: { type: Type.NUMBER },
+              xpReward: { type: Type.NUMBER },
+              paragraphs: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    paragraphNumber: { type: Type.NUMBER },
+                    targetText: { type: Type.STRING },
+                    englishTranslation: { type: Type.STRING },
+                  },
+                  required: ["paragraphNumber", "targetText", "englishTranslation"],
                 },
-                required: ["paragraphNumber", "targetText", "englishTranslation"],
+              },
+              keyVocabulary: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    word: { type: Type.STRING },
+                    phonetic: { type: Type.STRING },
+                    partOfSpeech: { type: Type.STRING },
+                    englishTranslation: { type: Type.STRING },
+                  },
+                  required: ["word", "phonetic", "partOfSpeech", "englishTranslation"],
+                },
+              },
+              comprehensionQuiz: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    question: { type: Type.STRING },
+                    options: { type: Type.ARRAY, items: { type: Type.STRING } },
+                    correctAnswer: { type: Type.NUMBER },
+                    explanation: { type: Type.STRING },
+                  },
+                  required: ["question", "options", "correctAnswer", "explanation"],
+                },
               },
             },
-            keyVocabulary: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  word: { type: Type.STRING },
-                  phonetic: { type: Type.STRING },
-                  partOfSpeech: { type: Type.STRING },
-                  englishTranslation: { type: Type.STRING },
-                  context: { type: Type.STRING },
-                },
-                required: ["word", "phonetic", "partOfSpeech", "englishTranslation"],
-              },
-            },
-            comprehensionQuiz: {
-              type: Type.ARRAY,
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  id: { type: Type.STRING },
-                  question: { type: Type.STRING },
-                  options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                  correctAnswer: { type: Type.NUMBER },
-                  explanation: { type: Type.STRING },
-                },
-                required: ["id", "question", "options", "correctAnswer", "explanation"],
-              },
-            },
+            required: [
+              "title",
+              "englishTitle",
+              "coverEmoji",
+              "summary",
+              "durationMinutes",
+              "xpReward",
+              "paragraphs",
+              "keyVocabulary",
+              "comprehensionQuiz",
+            ],
           },
-          required: [
-            "title",
-            "englishTitle",
-            "coverEmoji",
-            "summary",
-            "durationMinutes",
-            "xpReward",
-            "paragraphs",
-            "keyVocabulary",
-            "comprehensionQuiz",
-          ],
         },
       },
-    });
+      ["gemini-flash-latest", "gemini-3.1-flash-lite"],
+      1
+    );
 
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Story generation timed out")), 20000)
+    );
+
+    const response: any = await Promise.race([genPromise, timeoutPromise]);
     const parsed = JSON.parse(response.text || "{}");
     const storyId = `gen-story-${Date.now()}`;
+
+    const keyVocab = parsed.keyVocabulary || [];
+    const formattedParagraphs = (parsed.paragraphs || []).map((p: any, idx: number) => {
+      const wordsForThisPara = keyVocab.slice(idx * 2, (idx + 1) * 2).map((kv: any) => ({
+        word: kv.word,
+        translation: kv.englishTranslation || kv.translation || "",
+        phonetic: kv.phonetic || "",
+      }));
+
+      return {
+        id: `p-${idx + 1}-${storyId}`,
+        targetText: p.targetText || "",
+        englishText: p.englishTranslation || p.englishText || "",
+        keyWords: wordsForThisPara,
+      };
+    });
+
+    const formattedQuiz = (parsed.comprehensionQuiz || []).map((q: any) => ({
+      question: q.question,
+      options: q.options || [],
+      correctIndex: q.correctAnswer !== undefined ? q.correctAnswer : (q.correctIndex ?? 0),
+      explanation: q.explanation || "Correct answer based on the story text.",
+    }));
+
     const formattedStory = {
-      ...parsed,
       id: storyId,
+      title: parsed.title || `${targetLanguage} Adventure`,
+      englishTitle: parsed.englishTitle || "A Memorable Journey",
+      coverEmoji: parsed.coverEmoji || "📖",
       language: targetLanguage,
+      category: genre,
       cefrLevel: cefrLevel.includes("-") ? cefrLevel : `${cefrLevel} - Level`,
+      summary: parsed.summary || "An authentic graded reading experience.",
+      durationMinutes: parsed.durationMinutes || 3,
+      xpReward: parsed.xpReward || 100,
+      paragraphs: formattedParagraphs,
+      comprehensionQuiz: formattedQuiz,
     };
 
-    res.json({ success: true, story: formattedStory });
+    return res.json({ success: true, story: formattedStory });
   } catch (error: any) {
-    console.error("Error in /api/generate-story:", error);
-    res.status(500).json({ error: error.message || "Failed to generate story" });
+    console.warn("Generating resilient instant fallback story due to:", error?.message || "");
+    const storyId = `gen-story-${Date.now()}`;
+    const targetLang = req.body?.targetLanguage || "Spanish";
+    const topic = req.body?.customPrompt || req.body?.genre || "A City Walk";
+    const isSpanish = targetLang.toLowerCase().includes("spanish");
+
+    const fallbackStory = {
+      id: storyId,
+      title: isSpanish ? `El Encanto de ${topic}` : `Le Mystère de ${topic}`,
+      englishTitle: `The Charm of ${topic}`,
+      coverEmoji: "🌟",
+      language: targetLang,
+      category: req.body?.genre || "Adventure",
+      cefrLevel: req.body?.cefrLevel || "B1 - Intermediate",
+      summary: `A delightful story exploring ${topic} in ${targetLang}.`,
+      durationMinutes: 3,
+      xpReward: 90,
+      paragraphs: [
+        {
+          id: `p-1-${storyId}`,
+          targetText: isSpanish
+            ? `En una mañana luminosa, las calles empedradas invitaban a descubrir los secretos de ${topic}. Los aromas de café recién tostado se mezclaban con el murmullo de conversaciones cordiales.`
+            : `Par un matin lumineux, les ruelles pavées invitaient à découvrir les secrets de ${topic}. Les arômes de café fraîchement torréfié se mêlaient aux murmures de conversations chaleureuses.`,
+          englishText: `On a bright morning, cobblestone alleys invited discovery of the secrets of ${topic}. The aromas of freshly roasted coffee blended with the murmur of friendly conversations.`,
+          keyWords: [
+            { word: isSpanish ? "empedradas" : "ruelles", translation: isSpanish ? "cobblestoned" : "alleys", phonetic: isSpanish ? "em-peh-DRAH-dahs" : "rɥɛl" },
+          ],
+        },
+        {
+          id: `p-2-${storyId}`,
+          targetText: isSpanish
+            ? `Al doblar la esquina, una pequeña librería artesanal abrió sus puertas. El dueño sonrió y compartió una anécdota fascinante sobre la historia local que nadie más conocía.`
+            : `Au coin de la rue, une petite librairie artisanale ouvrit ses portes. Le propriétaire sourit et partagea une anecdote fascinante sur l'histoire locale que personne d'autre ne connaissait.`,
+          englishText: `Turning the corner, a small artisanal bookstore opened its doors. The owner smiled and shared a fascinating anecdote about local history that no one else knew.`,
+          keyWords: [
+            { word: isSpanish ? "librería" : "librairie", translation: isSpanish ? "bookstore" : "bookstore", phonetic: isSpanish ? "lee-breh-REE-ah" : "li.bʁe.ʁi" },
+          ],
+        },
+        {
+          id: `p-3-${storyId}`,
+          targetText: isSpanish
+            ? `Ese encuentro imprevisto transformó un día ordinario en una experiencia inolvidable, demostrando que aprender ${targetLang} abre puertas a mundos maravillosos.`
+            : `Cette rencontre imprévue transforma une journée ordinaire en une expérience inoubliable, prouvant qu'apprendre le ${targetLang} ouvre des portes vers des mondes merveilleux.`,
+          englishText: `That unexpected encounter transformed an ordinary day into an unforgettable experience, proving that learning ${targetLang} opens doors to wonderful worlds.`,
+          keyWords: [
+            { word: isSpanish ? "inolvidable" : "inoubliable", translation: isSpanish ? "unforgettable" : "unforgettable", phonetic: isSpanish ? "een-ohl-vee-DAH-bleh" : "i.nu.bli.jabl" },
+          ],
+        },
+      ],
+      comprehensionQuiz: [
+        {
+          question: isSpanish ? "¿Qué lugar abrió sus puertas al doblar la esquina?" : "Quel endroit a ouvert ses portes au coin de la rue ?",
+          options: [
+            isSpanish ? "Una pequeña librería artesanal" : "Une petite librairie artisanale",
+            isSpanish ? "Una estación de tren ruidosa" : "Une gare bruyante",
+            isSpanish ? "Un gran centro comercial" : "Un grand centre commercial",
+            isSpanish ? "Un banco cerrado" : "Une banque fermée",
+          ],
+          correctIndex: 0,
+          explanation: "The story mentions a small artisanal bookstore opening its doors.",
+        },
+      ],
+    };
+
+    return res.json({ success: true, story: fallbackStory, isFallback: true });
   }
 });
 
@@ -1794,6 +1911,7 @@ Generate:
         contents: [{ role: "user", parts: [{ text: `Generate unique, brand-new ${drillType} phonetics drill set now. Focus: ${targetSound}. Timestamp: ${Date.now()}` }] }],
         config: {
           systemInstruction: systemPrompt,
+          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
           temperature: 0.85,
           responseMimeType: "application/json",
           responseSchema: {
@@ -1843,7 +1961,7 @@ Generate:
     );
 
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Phonetics generation timed out")), 5000)
+      setTimeout(() => reject(new Error("Phonetics generation timed out")), 20000)
     );
 
     const response: any = await Promise.race([genPromise, timeoutPromise]);
@@ -1856,7 +1974,7 @@ Generate:
   }
 
   // Guaranteed Smart Randomized Linguistic Fallback
-  const langFallbackPool = fallbackDrillPool[targetLanguage] || fallbackDrillPool.French;
+  const langFallbackPool = fallbackDrillPool[targetLanguage] || fallbackDrillPool.Spanish || fallbackDrillPool.French;
   const drillOptions = langFallbackPool[drillType] || langFallbackPool.tongue_twisters || langFallbackPool.minimal_pairs;
   const randomIndex = Math.floor(Math.random() * drillOptions.length);
   const selectedFallback = drillOptions[randomIndex] || drillOptions[0];
@@ -2057,14 +2175,17 @@ app.post("/api/generate-reading-passage", async (req, res) => {
     proficiencyLevel = "A2 - Elementary",
     genre = "Culture & Daily Life",
     customTopic = "",
+    topic = "",
   } = req.body;
+
+  const effectiveTopic = (customTopic || topic || genre).trim();
 
   try {
     const ai = getGeminiClient();
     const systemPrompt = `You are an expert reading curriculum designer for foreign language education.
 Create a rich, culturally immersive reading passage for a student learning ${targetLanguage}.
 CEFR Level: ${proficiencyLevel}
-Genre/Topic: ${customTopic || genre}
+Genre/Topic: ${effectiveTopic}
 
 Generate a JSON object with:
 1. title: Engaging title in ${targetLanguage}
@@ -2078,9 +2199,10 @@ Generate a JSON object with:
     const genPromise = generateContentWithRetryAndFallback(
       ai,
       {
-        contents: [{ role: "user", parts: [{ text: `Generate reading passage for ${customTopic || genre} at ${proficiencyLevel}.` }] }],
+        contents: [{ role: "user", parts: [{ text: `Generate reading passage for ${effectiveTopic} at ${proficiencyLevel}.` }] }],
         config: {
           systemInstruction: systemPrompt,
+          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
@@ -2114,7 +2236,7 @@ Generate a JSON object with:
     );
 
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Reading passage generation timed out")), 5000)
+      setTimeout(() => reject(new Error("Reading passage generation timed out")), 20000)
     );
 
     const response: any = await Promise.race([genPromise, timeoutPromise]);
@@ -2129,7 +2251,7 @@ Generate a JSON object with:
     console.warn("Fallback triggered for reading passage:", err?.message || "");
     const fallbackPassage = {
       id: `custom-read-${Date.now()}`,
-      title: targetLanguage === "Spanish" ? `Descubriendo ${customTopic || genre}` : `À la Découverte de ${customTopic || genre}`,
+      title: targetLanguage === "Spanish" ? `Descubriendo ${effectiveTopic}` : `À la Découverte de ${effectiveTopic}`,
       level: proficiencyLevel,
       wordCount: 115,
       readTime: "3 min",
@@ -2725,6 +2847,48 @@ interface PendingOtp {
 const pendingOtps = new Map<string, PendingOtp>();
 
 /**
+ * Helper to dispatch email via Brevo SMTP Relay
+ */
+async function tryBrevoSmtpRelay(
+  toEmail: string,
+  otp: string,
+  emailHtml: string,
+  brevoSenderName: string,
+  smtpUser: string,
+  smtpPass: string
+): Promise<{ success: boolean; error?: string; provider?: string }> {
+  try {
+    const smtpHost = process.env.SMTP_HOST || "smtp-relay.brevo.com";
+    const port = parseInt(process.env.SMTP_PORT || "587", 10);
+    const isSecure = port === 465 || process.env.SMTP_SECURE === "true";
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port,
+      secure: isSecure,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    });
+
+    const fromAddress = process.env.SMTP_FROM || `"${brevoSenderName}" <${smtpUser}>`;
+
+    await transporter.sendMail({
+      from: fromAddress,
+      to: toEmail,
+      subject: `Your LingoLive Verification Code: ${otp}`,
+      text: `Your LingoLive 6-digit verification code is: ${otp}\nThis code will expire in 10 minutes.`,
+      html: emailHtml,
+    });
+    console.log(`[AUTH EMAIL] Successfully dispatched OTP email to ${toEmail} via Brevo SMTP (${smtpHost})`);
+    return { success: true, provider: "brevo-smtp" };
+  } catch (smtpErr: any) {
+    console.error("[AUTH EMAIL] Brevo SMTP error:", smtpErr);
+    return { success: false, error: `Brevo SMTP error: ${smtpErr?.message || "Failed to send email."}`, provider: "brevo-smtp" };
+  }
+}
+
+/**
  * Dispatch OTP verification email using Brevo REST API or Brevo SMTP Relay
  */
 async function dispatchOtpEmail(toEmail: string, otp: string): Promise<{ success: boolean; error?: string; provider?: string }> {
@@ -2757,12 +2921,13 @@ async function dispatchOtpEmail(toEmail: string, otp: string): Promise<{ success
   // 1. Primary: Brevo REST API (Fastest and most reliable)
   if (brevoApiKey) {
     try {
+      const cleanKey = brevoApiKey.trim().replace(/^["']|["']$/g, '');
       const response = await fetch("https://api.brevo.com/v3/smtp/email", {
         method: "POST",
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
-          "api-key": brevoApiKey.trim(),
+          "api-key": cleanKey,
         },
         body: JSON.stringify({
           sender: {
@@ -2782,54 +2947,53 @@ async function dispatchOtpEmail(toEmail: string, otp: string): Promise<{ success
 
       const data = await response.json().catch(() => ({}));
 
-      if (!response.ok) {
-        const errorMsg = data?.message || `Brevo API error status ${response.status}`;
-        console.error("[AUTH EMAIL] Brevo API error:", errorMsg);
-        return { success: false, error: `Brevo error: ${errorMsg}`, provider: "brevo" };
+      if (response.ok) {
+        console.log(`[AUTH EMAIL] Successfully dispatched OTP email to ${toEmail} via Brevo API (MessageId: ${data?.messageId || "ok"})`);
+        return { success: true, provider: "brevo-api" };
       }
 
-      console.log(`[AUTH EMAIL] Successfully dispatched OTP email to ${toEmail} via Brevo API (MessageId: ${data?.messageId || "ok"})`);
-      return { success: true, provider: "brevo" };
+      const rawMsg = data?.message || `Brevo API error status ${response.status}`;
+      console.error("[AUTH EMAIL] Brevo API error:", rawMsg);
+
+      // If the error is 'Key not found' or unauthorized, provide helpful details & try SMTP fallback
+      if (rawMsg.toLowerCase().includes("key not found") || response.status === 401) {
+        console.warn("[AUTH EMAIL] Brevo REST API key rejected ('Key not found'). Checking for SMTP fallback...");
+        const smtpUser = process.env.SMTP_USER || process.env.BREVO_SMTP_LOGIN;
+        const smtpPass = process.env.SMTP_PASS || process.env.BREVO_SMTP_KEY || cleanKey;
+        if (smtpUser && smtpPass) {
+          console.log("[AUTH EMAIL] Attempting Brevo SMTP Relay fallback...");
+          const smtpResult = await tryBrevoSmtpRelay(toEmail, otp, emailHtml, brevoSenderName, smtpUser, smtpPass);
+          if (smtpResult.success) return smtpResult;
+        }
+
+        return {
+          success: false,
+          error: `Brevo error: Key not found. Please ensure BREVO_API_KEY in Settings is an API Key (starts with 'xkeysib-') from Brevo -> 'SMTP & API' -> 'API Keys'. If using an SMTP Key ('xsmtpsib-'), set SMTP_USER (your Brevo login email) and SMTP_PASS.`,
+          provider: "brevo-api",
+        };
+      }
+
+      // If other API error occurs and SMTP exists, try SMTP
+      const smtpUser = process.env.SMTP_USER || process.env.BREVO_SMTP_LOGIN;
+      const smtpPass = process.env.SMTP_PASS || process.env.BREVO_SMTP_KEY;
+      if (smtpUser && smtpPass) {
+        console.log("[AUTH EMAIL] Attempting Brevo SMTP Relay fallback...");
+        const smtpResult = await tryBrevoSmtpRelay(toEmail, otp, emailHtml, brevoSenderName, smtpUser, smtpPass);
+        if (smtpResult.success) return smtpResult;
+      }
+
+      return { success: false, error: `Brevo error: ${rawMsg}`, provider: "brevo-api" };
     } catch (brevoErr: any) {
       console.error("[AUTH EMAIL] Failed sending via Brevo API:", brevoErr);
-      return { success: false, error: `Brevo error: ${brevoErr?.message || "Failed to send email."}`, provider: "brevo" };
     }
   }
 
   // 2. Secondary: Brevo SMTP Relay
-  const smtpHost = process.env.SMTP_HOST || "smtp-relay.brevo.com";
   const smtpUser = process.env.SMTP_USER || process.env.BREVO_SMTP_LOGIN;
   const smtpPass = process.env.SMTP_PASS || process.env.BREVO_SMTP_KEY;
 
   if (smtpUser && smtpPass) {
-    try {
-      const port = parseInt(process.env.SMTP_PORT || "587", 10);
-      const isSecure = port === 465 || process.env.SMTP_SECURE === "true";
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port,
-        secure: isSecure,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
-
-      const fromAddress = process.env.SMTP_FROM || `"${brevoSenderName}" <${smtpUser}>`;
-
-      await transporter.sendMail({
-        from: fromAddress,
-        to: toEmail,
-        subject: `Your LingoLive Verification Code: ${otp}`,
-        text: `Your LingoLive 6-digit verification code is: ${otp}\nThis code will expire in 10 minutes.`,
-        html: emailHtml,
-      });
-      console.log(`[AUTH EMAIL] Successfully dispatched OTP email to ${toEmail} via Brevo SMTP (${smtpHost})`);
-      return { success: true, provider: "brevo-smtp" };
-    } catch (smtpErr: any) {
-      console.error("[AUTH EMAIL] Brevo SMTP error:", smtpErr);
-      return { success: false, error: `Brevo SMTP error: ${smtpErr?.message || "Failed to send email."}`, provider: "brevo-smtp" };
-    }
+    return await tryBrevoSmtpRelay(toEmail, otp, emailHtml, brevoSenderName, smtpUser, smtpPass);
   }
 
   // Fallback notice if neither Brevo API nor Brevo SMTP credentials are configured
