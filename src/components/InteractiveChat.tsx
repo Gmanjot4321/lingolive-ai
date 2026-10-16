@@ -431,43 +431,32 @@ export const InteractiveChat: React.FC<InteractiveChatProps> = ({
 
             <button
               onClick={() => {
-                if (!allGoalsCompleted) {
-                  setShowGoalAlert(true);
-                  setTimeout(() => setShowGoalAlert(false), 5000);
-                  return;
-                }
                 onGenerateSessionSummary();
               }}
               disabled={isGeneratingSummary}
-              className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${
+              className={`px-2.5 sm:px-3.5 py-1.5 rounded-xl border text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                 isGeneratingSummary
                   ? 'bg-pink-500/10 border-pink-400/20 text-pink-300/70 cursor-wait'
                   : allGoalsCompleted
-                  ? 'bg-gradient-to-r from-emerald-500/30 via-pink-500/30 to-cyan-500/30 hover:from-emerald-500/40 hover:to-cyan-500/40 border-emerald-400/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.35)] cursor-pointer active:scale-95'
-                  : 'bg-white/5 border-white/10 text-slate-400 hover:text-slate-200 hover:border-amber-400/30 cursor-pointer'
+                  ? 'bg-gradient-to-r from-emerald-500/30 via-pink-500/30 to-cyan-500/30 hover:from-emerald-500/40 hover:to-cyan-500/40 border-emerald-400/50 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.35)] active:scale-95'
+                  : 'bg-gradient-to-r from-pink-500/20 to-purple-600/20 hover:from-pink-500/30 hover:to-purple-600/30 border-pink-500/40 text-pink-200 hover:text-white'
               }`}
-              title={
-                allGoalsCompleted
-                  ? 'All goals achieved! Generate comprehensive fluency review and CEFR report'
-                  : `Complete all scenario goals (${completedGoalsCount}/${totalGoalsCount}) to unlock review`
-              }
+              title="Generate comprehensive fluency review and CEFR report on your conversation"
             >
               {isGeneratingSummary ? (
                 <Loader2 className="w-3.5 h-3.5 text-pink-400 animate-spin" />
-              ) : allGoalsCompleted ? (
-                <Award className="w-3.5 h-3.5 text-emerald-400" />
               ) : (
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <Award className="w-3.5 h-3.5 text-pink-300" />
               )}
               <span className="hidden sm:inline">
                 {isGeneratingSummary
-                  ? 'Analyzing...'
+                  ? 'Evaluating Fluency...'
                   : allGoalsCompleted
-                  ? 'Finish & Review'
-                  : `Goals (${completedGoalsCount}/${totalGoalsCount})`}
+                  ? 'All Goals Done • Review'
+                  : `Evaluate Chat (${completedGoalsCount}/${totalGoalsCount})`}
               </span>
               <span className="sm:hidden">
-                {allGoalsCompleted ? 'Review' : `${completedGoalsCount}/${totalGoalsCount}`}
+                {isGeneratingSummary ? 'Evaluating...' : 'Evaluate'}
               </span>
             </button>
 
@@ -1011,16 +1000,24 @@ export const InteractiveChat: React.FC<InteractiveChatProps> = ({
               ))}
             </div>
 
-            {allGoalsCompleted && (
-              <button
-                onClick={onGenerateSessionSummary}
-                disabled={isGeneratingSummary}
-                className="w-full mt-3 py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer animate-pulse"
-              >
-                <Award className="w-3.5 h-3.5" />
-                <span>{isGeneratingSummary ? 'Analyzing Fluency...' : 'All Goals Done! Finish & Review'}</span>
-              </button>
-            )}
+            <button
+              onClick={onGenerateSessionSummary}
+              disabled={isGeneratingSummary}
+              className={`w-full mt-3 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md cursor-pointer ${
+                allGoalsCompleted
+                  ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 animate-pulse'
+                  : 'bg-white/10 hover:bg-white/15 border border-pink-500/30 text-pink-200 hover:text-white'
+              }`}
+            >
+              <Award className="w-3.5 h-3.5" />
+              <span>
+                {isGeneratingSummary
+                  ? 'Evaluating Fluency...'
+                  : allGoalsCompleted
+                  ? 'All Goals Done! Finish & Review'
+                  : `Evaluate Conversation (${completedGoalsCount}/${totalGoalsCount} Goals)`}
+              </span>
+            </button>
           </div>
 
           {/* Persona Details Card */}
