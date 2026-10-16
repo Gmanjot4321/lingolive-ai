@@ -210,13 +210,13 @@ export default function App() {
       if (!stored) return [];
       const parsed = JSON.parse(stored);
       if (Array.isArray(parsed)) {
-        // Filter out legacy dummy sample exams to ensure zero exams appear until user actually takes one
+        // Filter out legacy dummy sample exams while preserving all real student exams
         const valid = parsed.filter(
           (t) =>
             t &&
             typeof t === 'object' &&
             typeof t.id === 'string' &&
-            t.id.startsWith('exam-') &&
+            (t.id.startsWith('exam-') || t.id.startsWith('result-') || t.id.startsWith('mock-')) &&
             typeof t.overallScore === 'number' &&
             !t.id.includes('sample') &&
             !t.id.includes('mock-sample') &&
@@ -257,18 +257,29 @@ export default function App() {
   const STORAGE_LAST_CELEBRATED_DATE = 'lingolive_last_celebrated_streak_date';
 
   // User Profile & Progress Persistence State with verified daily streaks
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
+  const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     try {
-      const saved = localStorage.getItem('lingolive_user_profile');
-      if (!saved) return null;
-      const parsed = JSON.parse(saved);
-      if (!parsed || !parsed.name || parsed.name === 'Polyglot Learner') {
-        return null;
+      const saved = localStorage.getItem(STORAGE_USER_PROFILE);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return migrateOrInitializeProfile(parsed);
+        }
       }
-      return migrateOrInitializeProfile(parsed);
-    } catch {
-      return null;
+    } catch (e) {
+      console.error('Failed to load user profile from storage:', e);
     }
+    const initialProf = createCleanDefaultProfile({
+      name: 'Polyglot Learner',
+      email: 'learner@lingolive.app',
+      targetLanguage: currentLanguage.name,
+      proficiencyLevel,
+      dailyGoalMinutes: 15,
+    });
+    try {
+      localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(initialProf));
+    } catch {}
+    return initialProf;
   });
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
@@ -280,8 +291,8 @@ export default function App() {
   ) => {
     setUserProfile((prev) => {
       const activeProf = prev || createCleanDefaultProfile({
-        name: 'Guest Polyglot',
-        email: 'guest@lingolive.app',
+        name: 'Polyglot Learner',
+        email: 'learner@lingolive.app',
         targetLanguage: currentLanguage.name,
         proficiencyLevel,
         dailyGoalMinutes: 15,
@@ -314,6 +325,10 @@ export default function App() {
         setStreakCelebrationOpen(true);
       }
 
+      try {
+        localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(updatedProfile));
+      } catch {}
+
       return updatedProfile;
     });
   };
@@ -322,9 +337,14 @@ export default function App() {
     handleRecordStudy(1, amount, skillIncrement);
   };
 
-  // Automatic database synchronization whenever profile changes
+  // Automatic database & local storage synchronization whenever profile changes
   useEffect(() => {
-    if (userProfile && userProfile.name !== 'Polyglot Learner') {
+    if (userProfile) {
+      try {
+        localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(userProfile));
+      } catch (e) {
+        console.error('Failed to save user profile to localStorage:', e);
+      }
       saveUserProfileToDb(userProfile);
     }
   }, [userProfile]);
@@ -699,6 +719,21 @@ export default function App() {
       } catch {}
       return updated;
     });
+
+    setUserProfile((prev) => {
+      if (!prev) return prev;
+      const updated = {
+        ...prev,
+        levelPracticeCounts: {
+          ...(prev.levelPracticeCounts || {}),
+          [currentLevelCode]: ((prev.levelPracticeCounts || {})[currentLevelCode] || 0) + amount,
+        },
+      };
+      try {
+        localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   const handleSelectProficiency = (level: ProficiencyLevel) => {
@@ -711,6 +746,16 @@ export default function App() {
     try {
       localStorage.setItem(STORAGE_USER_LEVEL, level);
     } catch {}
+
+    setUserProfile((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, proficiencyLevel: level };
+      try {
+        localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+
     if (level.includes('A0')) {
       const zeroScenario = PRACTICE_SCENARIOS.find((s) => s.id === 'first-words-zero-knowledge') || PRACTICE_SCENARIOS[0];
       setCurrentScenario(zeroScenario);
@@ -794,7 +839,21 @@ export default function App() {
   };
 
   const handleMockTestCompleted = (result: MockTestResult) => {
-    setMockTestHistory((prev) => [result, ...prev]);
+    setMockTestHistory((prev) => {
+      const filtered = prev.filter((t) => t.id !== result.id);
+      const updated = [result, ...filtered];
+      try {
+        localStorage.setItem(STORAGE_TEST_HISTORY, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save mock test history:', e);
+      }
+      return updated;
+    });
+
+    if (userProfile?.id) {
+      saveExamResultToDb(userProfile.id, result);
+    }
+
     const earnedMockXP = Math.min(45, Math.max(25, Math.round(result.overallScore * 0.4)));
     handleRecordStudy(15, earnedMockXP, {
       reading: 2,
@@ -968,7 +1027,10 @@ export default function App() {
             currentLanguage={currentLanguage}
             proficiencyLevel={proficiencyLevel}
             onCompleteExam={handleMockTestCompleted}
+            onSaveResult={handleMockTestCompleted}
             onBackToDashboard={() => setActiveView('dashboard')}
+            onNavigateToDashboard={() => setActiveView('dashboard')}
+            onNavigateToChat={() => setActiveView('chat')}
           />
         )}
 
@@ -1124,10 +1186,24 @@ export default function App() {
         <AuthModal
           user={userProfile}
           onClose={() => setAuthModalOpen(false)}
-          onLogin={(profile) => setUserProfile(profile)}
+          onLogin={(profile) => {
+            setUserProfile(profile);
+            try {
+              localStorage.setItem('lingolive_user_profile', JSON.stringify(profile));
+            } catch {}
+          }}
           onLogout={() => {
-            setUserProfile(null);
-            localStorage.removeItem('lingolive_user_profile');
+            const fresh = createCleanDefaultProfile({
+              name: 'Polyglot Learner',
+              email: 'learner@lingolive.app',
+              targetLanguage: currentLanguage.name,
+              proficiencyLevel,
+              dailyGoalMinutes: 15,
+            });
+            setUserProfile(fresh);
+            try {
+              localStorage.setItem('lingolive_user_profile', JSON.stringify(fresh));
+            } catch {}
           }}
           onUpdateProfile={(profile) => setUserProfile(profile)}
           savedWordsCount={savedWords.length}
