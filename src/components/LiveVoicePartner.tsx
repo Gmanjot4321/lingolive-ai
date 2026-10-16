@@ -72,6 +72,7 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
   const [typedMessage, setTypedMessage] = useState<string>('');
   const [showGoalsDrawer, setShowGoalsDrawer] = useState<boolean>(false);
   const [playingMessageId, setPlayingMessageId] = useState<string | null>(null);
+  const [mobileTab, setMobileTab] = useState<'stage' | 'transcript'>('stage');
 
   const recognitionRef = useRef<any>(null);
   const isMutedRef = useRef<boolean>(false);
@@ -116,7 +117,7 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
     return () => clearInterval(interval);
   }, [isConnected]);
 
-  // Text-to-speech helper with rapid fallback
+  // Text-to-speech helper with rapid fallback and safety timer
   const speakText = async (text: string, messageId?: string) => {
     stopCurrentAudioPlayback();
     if (!text.trim()) return;
@@ -128,36 +129,39 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
     const speed = speechPacing === 'slow' ? 0.85 : 1.0;
     const cleanText = text.trim();
 
+    // Safety timeout to ensure partnerSpeaking can never get permanently stuck
+    const estimatedDurationMs = Math.min(14000, Math.max(3000, (cleanText.length / 12) * 1000));
+    const safetyTimer = setTimeout(() => {
+      setPartnerSpeaking(false);
+      setCurrentSpeaker(null);
+      setPlayingMessageId(null);
+    }, estimatedDurationMs);
+
+    const finishSpeaking = () => {
+      clearTimeout(safetyTimer);
+      setPartnerSpeaking(false);
+      setCurrentSpeaker(null);
+      setPlayingMessageId(null);
+    };
+
     // Fallback: Web Speech API
     const speakViaBrowser = () => {
       if ('speechSynthesis' in window) {
         try {
           window.speechSynthesis.cancel();
           const utterance = new SpeechSynthesisUtterance(cleanText);
-          // For A0, English guidance with target words is spoken in English or target code
-          utterance.lang = isA0 ? 'en-US' : currentLanguage.speechCode || 'es-ES';
+          utterance.lang = isA0 ? 'en-US' : currentLanguage.speechCode || 'fr-FR';
           utterance.rate = speed;
-          utterance.onend = () => {
-            setPartnerSpeaking(false);
-            setCurrentSpeaker(null);
-            setPlayingMessageId(null);
-          };
-          utterance.onerror = () => {
-            setPartnerSpeaking(false);
-            setCurrentSpeaker(null);
-            setPlayingMessageId(null);
-          };
+          utterance.onend = finishSpeaking;
+          utterance.onerror = finishSpeaking;
           window.speechSynthesis.speak(utterance);
           return;
         } catch {
-          setPartnerSpeaking(false);
-          setCurrentSpeaker(null);
-          setPlayingMessageId(null);
+          finishSpeaking();
         }
+      } else {
+        finishSpeaking();
       }
-      setPartnerSpeaking(false);
-      setCurrentSpeaker(null);
-      setPlayingMessageId(null);
     };
 
     try {
@@ -172,18 +176,14 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
           text: cleanText,
           voiceName: currentPersona.voice,
           speed,
-          language: isA0 ? 'en' : currentLanguage.speechCode.split('-')[0],
+          language: isA0 ? 'en' : (currentLanguage.speechCode || 'fr-FR').split('-')[0],
         }),
       });
       clearTimeout(timeoutId);
 
       const data = await res.json();
       if (data.success && data.audio) {
-        await playPcmAudioBase64(data.audio, 24000, speed, () => {
-          setPartnerSpeaking(false);
-          setCurrentSpeaker(null);
-          setPlayingMessageId(null);
-        });
+        await playPcmAudioBase64(data.audio, 24000, speed, finishSpeaking);
       } else {
         speakViaBrowser();
       }
@@ -220,10 +220,16 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
         const normalized = Math.min(1, avg / 80);
         setInputVolume(normalized);
 
-        const isSpeaking = normalized > 0.12 && !isMutedRef.current && !partnerSpeakingRef.current;
+        const isSpeaking = normalized > 0.12 && !isMutedRef.current;
         setUserSpeaking(isSpeaking);
         if (isSpeaking) {
           setCurrentSpeaker('user');
+          // If partner is currently talking and user speaks with volume, interrupt partner playback
+          if (partnerSpeakingRef.current && normalized > 0.22) {
+            stopCurrentAudioPlayback();
+            setPartnerSpeaking(false);
+            setCurrentSpeaker('user');
+          }
         }
 
         volumeAnimFrameRef.current = requestAnimationFrame(checkVolume);
@@ -278,46 +284,69 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
       const data = await res.json();
       setIsThinking(false);
 
-      if (data.reply) {
+      if (data.reply || data.data?.reply) {
+        const replyText = data.reply || data.data?.reply;
+        const replyTranslation = data.replyTranslation || data.data?.replyTranslation;
+        const phoneticGuide = data.phoneticGuide || data.data?.phoneticGuide;
+        const correction = data.correction || data.data?.correction;
+        const grammarTip = data.grammarTip || data.data?.grammarTip;
+        const suggestedReplies = data.suggestedReplies || data.data?.suggestedReplies;
+        const goalsCompleted = data.goalsCompleted || data.data?.goalsCompleted || [];
+
         const partnerMsg: ChatMessage = {
           id: `partner-${Date.now()}`,
           role: 'partner',
-          text: data.reply,
-          translation: data.replyTranslation,
-          phonetic: data.phoneticGuide,
-          correction: data.correction,
-          grammarTip: data.grammarTip,
-          suggestedReplies: data.suggestedReplies,
+          text: replyText,
+          translation: replyTranslation,
+          phonetic: phoneticGuide,
+          correction,
+          grammarTip,
+          suggestedReplies,
           timestamp: new Date(),
         };
 
         setTranscript((prev) => [...prev, partnerMsg]);
-        setCurrentTurnText(`${currentPersona.name}: ${data.reply}`);
+        setCurrentTurnText(`${currentPersona.name}: ${replyText}`);
 
         // Update goals completed
-        if (Array.isArray(data.goalsCompleted) && data.goalsCompleted.length > 0) {
-          data.goalsCompleted.forEach((gid: string) => {
+        if (Array.isArray(goalsCompleted) && goalsCompleted.length > 0) {
+          goalsCompleted.forEach((gid: string) => {
             onUpdateScenarioGoal(gid, true);
           });
         }
 
         // Partner speaks response out loud
-        speakText(data.reply, partnerMsg.id);
+        speakText(replyText, partnerMsg.id);
       }
     } catch (err: any) {
       setIsThinking(false);
       console.error('Error generating partner voice response:', err);
 
-      // Adaptive conversational fallback
-      const fallbackReply = isA0
-        ? `To say "Very good!" in ${currentLanguage.name}, we say "${currentScenario.samplePhrase || 'Bien'}". Can you try saying that?`
-        : `¡Muy bien! Te escucho con claridad. ¿Qué más me puedes comentar sobre ${currentScenario.title}?`;
+      // Adaptive multilingual fallback
+      let fallbackReply = '';
+      if (isA0) {
+        if (currentLanguage.name === 'French') {
+          fallbackReply = 'Wonderful effort! In French, to say "Hello", we say "Bonjour" (bohn-ZHOOR). Can you try saying "Bonjour"?';
+        } else if (currentLanguage.name === 'German') {
+          fallbackReply = 'Wonderful effort! In German, to say "Hello", we say "Hallo" (HAH-loh). Can you try saying "Hallo"?';
+        } else {
+          fallbackReply = `Wonderful effort! In ${currentLanguage.name}, to say "Hello", we say "¡Hola!" (OH-lah). Can you try saying "¡Hola!"?`;
+        }
+      } else {
+        if (currentLanguage.name === 'French') {
+          fallbackReply = `Très bien ! Je vous écoute avec attention. Que souhaitez-vous commander ou demander d'autre ?`;
+        } else if (currentLanguage.name === 'German') {
+          fallbackReply = `Sehr gut! Ich höre Ihnen aufmerksam zu. Was möchten Sie als Nächstes sagen?`;
+        } else {
+          fallbackReply = `¡Muy bien! Te escucho con claridad. ¿Qué más me puedes comentar sobre ${currentScenario.title}?`;
+        }
+      }
 
       const partnerMsg: ChatMessage = {
         id: `partner-${Date.now()}`,
         role: 'partner',
         text: fallbackReply,
-        translation: 'Very good! I hear you clearly. What else can you tell me?',
+        translation: 'Very good! I hear you clearly. What else would you like to say?',
         timestamp: new Date(),
       };
       setTranscript((prev) => [...prev, partnerMsg]);
@@ -339,13 +368,20 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
     try {
       const recognition = new SpeechRecognition();
       // For A0, users speak mostly English with occasional target words
-      recognition.lang = isA0 ? 'en-US' : currentLanguage.speechCode || 'es-ES';
+      recognition.lang = isA0 ? 'en-US' : currentLanguage.speechCode || 'fr-FR';
       recognition.continuous = true;
       recognition.interimResults = true;
       recognition.maxAlternatives = 1;
 
       recognition.onresult = (event: any) => {
-        if (isMutedRef.current || partnerSpeakingRef.current) return;
+        if (isMutedRef.current) return;
+
+        // Barge-in: immediately stop partner playback if user starts speaking
+        if (partnerSpeakingRef.current) {
+          stopCurrentAudioPlayback();
+          setPartnerSpeaking(false);
+          setCurrentSpeaker('user');
+        }
 
         let currentInterim = '';
         let finalChunk = '';
@@ -366,7 +402,7 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
           setUserSpeaking(true);
           setCurrentSpeaker('user');
 
-          // Reset silence timer: when user pauses for 1.6s, submit the turn automatically
+          // Reset silence timer: when user pauses for 1.4s, submit the turn automatically
           if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
           silenceTimerRef.current = setTimeout(() => {
             if (lastSpokenTextRef.current.trim() && !partnerSpeakingRef.current) {
@@ -374,7 +410,7 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
               lastSpokenTextRef.current = '';
               handleUserSpokenTurn(textToSend);
             }
-          }, 1600);
+          }, 1400);
         }
       };
 
@@ -634,32 +670,63 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
           </button>
         </div>
 
-        {/* Right: Quick Review Button */}
+        {/* Right: Evaluate Fluency Report Button */}
         <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={endLiveSession}
-            disabled={(!isConnected && transcript.length === 0) || isGeneratingSummary}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-pink-500/25 to-purple-600/25 hover:from-pink-500/35 hover:to-purple-600/35 border border-pink-400/40 text-pink-200 hover:text-white text-xs font-bold transition-all shadow-sm cursor-pointer disabled:opacity-40"
+            onClick={() => onEndCallAndSummarize(transcript)}
+            disabled={isGeneratingSummary}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500/30 via-pink-500/25 to-cyan-500/30 hover:from-emerald-500/40 hover:to-cyan-500/40 border border-emerald-400/50 text-emerald-200 hover:text-white text-xs font-bold transition-all shadow-sm cursor-pointer disabled:opacity-40"
             title="Evaluate full call conversation"
           >
             {isGeneratingSummary ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin text-pink-300" />
             ) : (
-              <Award className="w-3.5 h-3.5 text-pink-300" />
+              <Award className="w-3.5 h-3.5 text-emerald-300" />
             )}
             <span className="hidden sm:inline">
-              {isGeneratingSummary ? 'Evaluating...' : 'Evaluate Call'}
+              {isGeneratingSummary ? 'Evaluating Fluency...' : 'Evaluate Call'}
+            </span>
+            <span className="sm:hidden">
+              {isGeneratingSummary ? 'Evaluating...' : 'Evaluate'}
             </span>
           </button>
         </div>
 
       </div>
 
+      {/* Mobile Tab Switcher */}
+      <div className="lg:hidden flex border-b border-white/10 shrink-0 bg-white/[0.03]">
+        <button
+          onClick={() => setMobileTab('stage')}
+          className={`flex-1 py-2 text-xs font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
+            mobileTab === 'stage'
+              ? 'border-pink-500 text-pink-300 bg-pink-500/10'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <Mic className="w-3.5 h-3.5" />
+          <span>Live Call Stage</span>
+        </button>
+        <button
+          onClick={() => setMobileTab('transcript')}
+          className={`flex-1 py-2 text-xs font-bold flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
+            mobileTab === 'transcript'
+              ? 'border-cyan-400 text-cyan-300 bg-cyan-500/10'
+              : 'border-transparent text-slate-400 hover:text-white'
+          }`}
+        >
+          <MessageSquare className="w-3.5 h-3.5" />
+          <span>Live Transcript ({transcript.length})</span>
+        </button>
+      </div>
+
       {/* Main Dual Stage: Left Voice Call Stage | Right Live Transcript */}
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden relative">
 
         {/* LEFT COLUMN: Voice Call Stage & 3D Interactive Sphere */}
-        <div className="w-full lg:w-[50%] flex flex-col border-b lg:border-b-0 lg:border-r border-white/10 bg-gradient-to-b from-white/[0.02] to-transparent p-3 sm:p-5 justify-between relative overflow-y-auto">
+        <div className={`w-full lg:w-[50%] flex-col border-b lg:border-b-0 lg:border-r border-white/10 bg-gradient-to-b from-white/[0.02] to-transparent p-3 sm:p-5 justify-between relative overflow-y-auto ${
+          mobileTab === 'stage' ? 'flex' : 'hidden lg:flex'
+        }`}>
           
           {/* Top Banner with Scenario & CEFR level */}
           <div className="flex items-center justify-between gap-2 px-3.5 py-1.5 rounded-2xl bg-white/[0.05] border border-white/10 text-xs shrink-0">
@@ -830,6 +897,23 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
               )}
             </div>
 
+            {/* Instant Send Spoken Turn Action if speech detected */}
+            {interimTranscript && (
+              <button
+                onClick={() => {
+                  const textToSend = interimTranscript.trim();
+                  setInterimTranscript('');
+                  lastSpokenTextRef.current = '';
+                  if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+                  handleUserSpokenTurn(textToSend);
+                }}
+                className="mt-2 w-full py-1.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-[0_0_15px_rgba(52,211,153,0.4)] animate-pulse cursor-pointer"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Send Spoken Turn: &quot;{interimTranscript.slice(0, 28)}{interimTranscript.length > 28 ? '...' : ''}&quot;</span>
+              </button>
+            )}
+
             {/* Quick text-turn fallback input in case mic is noisy */}
             {isConnected && (
               <div className="mt-2.5 flex items-center gap-1.5">
@@ -858,7 +942,9 @@ export const LiveVoicePartner: React.FC<LiveVoicePartnerProps> = ({
         </div>
 
         {/* RIGHT COLUMN: Live Transcript & Scenario Panel */}
-        <div className="w-full lg:w-[50%] flex flex-col bg-white/[0.01] p-3 sm:p-4 overflow-hidden">
+        <div className={`w-full lg:w-[50%] flex-col bg-white/[0.01] p-3 sm:p-4 overflow-hidden ${
+          mobileTab === 'transcript' ? 'flex' : 'hidden lg:flex'
+        }`}>
           
           {/* Transcript Header with Scenario Goals Drawer */}
           <div className="flex items-center justify-between pb-2 border-b border-white/10 shrink-0">
