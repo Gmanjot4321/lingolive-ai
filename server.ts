@@ -1189,7 +1189,7 @@ Return strictly valid JSON matching the schema.`;
     });
 
     const parsed = JSON.parse(response.text || "{}");
-    res.json({ success: true, result: parsed });
+    res.json({ success: true, result: parsed, evaluation: parsed, data: parsed });
   } catch (error: any) {
     console.error("Error in /api/evaluate-mock-test:", error);
     const lScore = Math.round(((req.body?.listeningScore || 1) / Math.max(req.body?.listeningTotal || 2, 1)) * 25);
@@ -1198,36 +1198,40 @@ Return strictly valid JSON matching the schema.`;
     const sScore = req.body?.speakingTranscript?.length > 20 ? 21 : 15;
     const total = lScore + rScore + wScore + sScore;
 
+    const fallbackResult = {
+      overallScore: total,
+      cefrLevel: total > 80 ? "B2" : total > 60 ? "B1" : total > 40 ? "A2" : "A1",
+      listeningScore: lScore,
+      readingScore: rScore,
+      writingScore: wScore,
+      speakingScore: sScore,
+      listeningFeedback: "Good retention of key details and contextual inference.",
+      readingFeedback: "Strong comprehension of main ideas and vocabulary cues.",
+      writingFeedback: {
+        score: wScore,
+        grammarScore: 18,
+        vocabularyScore: 19,
+        feedback: "Good sentence formation and communicative clarity. Work on transition words.",
+        correctionDiff: "Polished phrasing with enhanced connectors.",
+      },
+      speakingFeedback: {
+        score: sScore,
+        fluencyScore: 18,
+        pronunciationScore: 19,
+        feedback: "Intelligible oral speech with appropriate vocabulary and pacing.",
+      },
+      improvementRoadmap: [
+        "Strengthen compound connectors to form richer complex sentences.",
+        "Expand idiomatic vocabulary in your target language.",
+        "Practice past-tense verbs and spontaneous conversation.",
+      ],
+    };
+
     res.json({
       success: true,
-      result: {
-        overallScore: total,
-        cefrLevel: total > 80 ? "B2" : total > 60 ? "B1" : total > 40 ? "A2" : "A1",
-        listeningScore: lScore,
-        readingScore: rScore,
-        writingScore: wScore,
-        speakingScore: sScore,
-        listeningFeedback: "Good retention of key details and contextual inference.",
-        readingFeedback: "Strong comprehension of main ideas and vocabulary cues.",
-        writingFeedback: {
-          score: wScore,
-          grammarScore: 18,
-          vocabularyScore: 19,
-          feedback: "Good sentence formation and communicative clarity. Work on transition words.",
-          correctionDiff: "Polished phrasing with enhanced connectors.",
-        },
-        speakingFeedback: {
-          score: sScore,
-          fluencyScore: 18,
-          pronunciationScore: 19,
-          feedback: "Spoken flow is communicative and confident. Continue practicing consonant clarity.",
-        },
-        improvementRoadmap: [
-          "Practice listening to authentic podcasts at native speed",
-          "Read short regional news stories weekly to broaden vocabulary",
-          "Conduct 10-minute daily spontaneous speaking exercises with your AI partner",
-        ],
-      },
+      result: fallbackResult,
+      evaluation: fallbackResult,
+      data: fallbackResult,
     });
   }
 });
