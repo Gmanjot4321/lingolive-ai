@@ -793,10 +793,15 @@ export default function App() {
     });
   };
 
-  // Mock Test completion
   const handleMockTestCompleted = (result: MockTestResult) => {
     setMockTestHistory((prev) => [result, ...prev]);
-    handleRecordStudy(15, Math.max(50, Math.round(result.overallScore * 1.5)));
+    const earnedMockXP = Math.min(45, Math.max(25, Math.round(result.overallScore * 0.4)));
+    handleRecordStudy(15, earnedMockXP, {
+      reading: 2,
+      listening: 2,
+      writing: 1,
+      speaking: 1,
+    });
     handleIncrementLevelPractice(2);
   };
 
