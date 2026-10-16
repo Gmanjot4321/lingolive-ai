@@ -113,10 +113,16 @@ app.post("/api/chat", async (req, res) => {
 
     let cefrLevelGuideline = "";
     if (isZeroKnowledge) {
-      cefrLevelGuideline = `CEFR Level A0 (Zero Knowledge):
-- Speak predominantly in ${nativeLanguage} (English) to guide the student, introducing only ONE or TWO key words/short phrases in ${targetLanguage} at a time.
-- Always provide exact phonetic pronunciation and explain what each word literally means.
-- Keep turns short, cheerful, and rewarding. Suggested replies must be 1-3 simple words with translations.`;
+      cefrLevelGuideline = `CEFR Level A0 (Zero Knowledge / Absolute Beginner):
+- Speak predominantly in ${nativeLanguage} (English) to guide the student comfortably and warmly.
+- Whenever teaching, introducing, or prompting phrases in ${targetLanguage}, you MUST ALWAYS use the phrasing:
+  "To say '[English meaning]' in ${targetLanguage}, we say '[Target phrase]'."
+  (Example: "To say 'Hello, how are you?' in ${targetLanguage}, we say 'Bonjour, comment ça va ?' (bohn-ZHOOR, koh-mahn sah vah). Try saying it out loud!")
+- Always provide clear phonetic pronunciation and explain what the words literally mean.
+- Acknowledge and praise the student warmly for any attempt or reply, then prompt the next phrase:
+  "Great job! To say 'Thank you' in ${targetLanguage}, we say 'Merci'. Now you try!"
+- Keep your spoken 'reply' in English with the target phrase embedded, clear and encouraging.
+- Suggested replies must be simple 1-3 word phrases in ${targetLanguage} with English translations.`;
     } else if (proficiencyLevel.includes("A1")) {
       cefrLevelGuideline = `CEFR Level A1 (Beginner):
 - Use very simple high-frequency vocabulary and straightforward present tense.
@@ -214,7 +220,9 @@ Provide the partner's next conversational response, evaluate goal completion bas
           properties: {
             reply: {
               type: Type.STRING,
-              description: `The conversational reply in ${targetLanguage}.`,
+              description: isZeroKnowledge
+                ? `The tutor's spoken guidance in English embedding the target phrase formula: "To say '[concept]' in ${targetLanguage}, we say '[phrase]'."`
+                : `The conversational reply in ${targetLanguage}.`,
             },
             replyTranslation: {
               type: Type.STRING,
@@ -754,25 +762,36 @@ app.post("/api/session-summary", async (req, res) => {
   try {
     const ai = getGeminiClient();
 
-    // Slice to the last 8 messages for sub-second generation
-    const recentMessages = Array.isArray(rawMessages) ? rawMessages.slice(-8) : [];
+    // Include recent dialogue messages for context
+    const recentMessages = Array.isArray(rawMessages) ? rawMessages.slice(-12) : [];
     const transcriptSnippet = recentMessages
-      .map((m: any) => `${m.role === "user" ? "Student" : "Coach"}: ${(m.text || m.content || "").slice(0, 150)}`)
+      .map((m: any) => `${m.role === "user" ? "Student" : "Coach"}: ${(m.text || m.content || "").slice(0, 200)}`)
       .join("\n");
 
-    // Race Gemini call against a 2500ms timeout for instant user experience
-    const geminiPromise = ai.models.generateContent({
-      model: "gemini-3.1-flash-lite",
-      contents: `Quickly evaluate this short dialogue snippet in ${targetLanguage || "the language"} (CEFR ${proficiencyLevel || "B1"}):
-${transcriptSnippet || "Student practicing conversation."}
+    const promptText = `You are an expert CEFR language assessor and conversational coach.
+Evaluate this conversation practice session in ${targetLanguage || "the language"} at CEFR level "${proficiencyLevel || "General"}".
 
-Scenario: ${scenarioTitle}
-Goals: ${goalsList.slice(0, 2).join(", ") || "General practice"}
+Scenario Title: "${scenarioTitle}"
+Target Scenario Goals: ${goalsList.join(", ") || "Active conversational practice"}
 
-Return a concise JSON evaluation with 2 strengths, 2 areas to improve, 1 grammar highlight, and 1-2 key vocab words.`,
+Full Conversation Transcript:
+${transcriptSnippet || "Student: Hello\nCoach: Welcome!"}
+
+Tasks:
+1. overallScore: Score from 50 to 98 based on user participation, CEFR appropriateness, and goal completion.
+2. strengths: 2-3 genuine, encouraging, specific observations on what the student did well (e.g. greetings, vocabulary, persistence).
+3. areasToImprove: 2 constructive, actionable suggestions to advance to the next CEFR milestone.
+4. grammarHighlights: 1-2 practical highlights with "original" (student phrase or context), "better" (natural native alternative), and "rule" (clear 1-sentence grammatical or cultural explanation in English).
+5. keyVocabularyLearned: 2-4 key words or phrases practiced or introduced with their English "term" and "meaning".
+6. motivationalComment: Warm, personal encouragement tailored to ${targetLanguage} and ${proficiencyLevel}.
+
+Return ONLY a valid JSON object matching the requested schema.`;
+
+    const response = await generateContentWithRetryAndFallback(ai, {
+      contents: promptText,
       config: {
+        thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
         responseMimeType: "application/json",
-        maxOutputTokens: 400,
         responseSchema: {
           type: Type.OBJECT,
           properties: {
@@ -804,16 +823,11 @@ Return a concise JSON evaluation with 2 strengths, 2 areas to improve, 1 grammar
             },
             motivationalComment: { type: Type.STRING },
           },
-          required: ["overallScore", "strengths", "areasToImprove", "keyVocabularyLearned", "motivationalComment"],
+          required: ["overallScore", "strengths", "areasToImprove", "grammarHighlights", "keyVocabularyLearned", "motivationalComment"],
         },
       },
     });
 
-    const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Analysis timeout - fast fallback")), 2400)
-    );
-
-    const response: any = await Promise.race([geminiPromise, timeoutPromise]);
     const parsed = JSON.parse(response.text || "{}");
 
     if (parsed && typeof parsed.overallScore === "number") {
@@ -821,7 +835,7 @@ Return a concise JSON evaluation with 2 strengths, 2 areas to improve, 1 grammar
     }
     return res.json({ success: true, report: dynamicFallbackReport, data: dynamicFallbackReport });
   } catch (error: any) {
-    // Return the dynamic report instantaneously
+    console.warn("Session summary AI generation fell back to dynamic report:", error?.message);
     return res.json({
       success: true,
       report: dynamicFallbackReport,
@@ -3526,10 +3540,12 @@ async function startServer() {
 
           let liveLevelInstruction = "";
           if (isLiveZeroKnowledge) {
-            liveLevelInstruction = `1. Speak predominantly in English (the student's native language) to guide them comfortably.
-2. Teach ONE target language word or short phrase at a time, pronouncing it slowly, clearly, and repeating if needed.
-3. Explain its meaning and ask the student to repeat after you.
-4. Keep turns brief (1-2 sentences), warm, and rewarding.`;
+            liveLevelInstruction = `1. Speak predominantly in English (the student's native language) to guide them with warmth and reassurance.
+2. Whenever teaching, introducing, or prompting phrases in ${targetLanguage}, you MUST explicitly say:
+   "To say '[English meaning]' in ${targetLanguage}, we say '[Target phrase]'."
+   (e.g., "To say 'Hello' in ${targetLanguage}, we say 'Bonjour'. Try saying 'Bonjour'!")
+3. Praise any attempt warmly, explain word meanings, and prompt the next step with the same formula.
+4. Keep turns brief (1-2 sentences), patient, and encouraging.`;
           } else if (proficiencyLevel.includes("A1")) {
             liveLevelInstruction = `1. Speak in ${targetLanguage} using very simple present-tense sentences (4-7 words).
 2. Speak slowly and enunciate clearly.
@@ -3559,9 +3575,10 @@ ${liveLevelInstruction}
 
 Keep turns conversational, interactive, and responsive.`;
 
-          // Connect to Gemini Live API with gemini-3.8-live
+          // Connect to Gemini Live API
+          const liveModelName = "gemini-2.0-flash-exp";
           liveSession = await ai.live.connect({
-            model: "gemini-3.8-live",
+            model: liveModelName,
             config: {
               responseModalities: [Modality.AUDIO],
               speechConfig: {
