@@ -158,7 +158,7 @@ export const SpeakingPracticeView: React.FC<SpeakingPracticeViewProps> = ({
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Speech recognition is not supported in this browser. You can still listen to the model audio!');
+      setFeedback('Speech recognition is not supported in this browser. You can still listen to the native model audio!');
       return;
     }
 
