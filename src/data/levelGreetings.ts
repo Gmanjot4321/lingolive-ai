@@ -9,11 +9,11 @@ export interface LevelGreeting {
 export const LEVEL_GREETINGS: Record<string, Record<string, LevelGreeting>> = {
   spanish: {
     'A0 - Absolute Beginner (Zero Knowledge)': {
-      text: '¡Hola! Bienvenido. (Hello! Welcome.) Don’t worry if you know zero Spanish—we will learn step by step together! Let’s start with your very first greeting: "¡Hola!". Try saying it or click below!',
-      translation: 'Hello! Welcome. Don’t worry if you know zero Spanish—we will learn together!',
+      text: 'Hello! Welcome! I am here to guide you step by step. In Spanish, to say "Hello", we say "¡Hola!" (OH-lah). Can you try saying "¡Hola!"?',
+      translation: 'Hello! Welcome. In Spanish, to say "Hello", we say "¡Hola!". Try saying "¡Hola!"!',
       phonetic: 'OH-lah',
       suggestedStarters: ['¡Hola!', '¿Cómo estás?', 'How do I say thank you?'],
-      pedagogicalFocus: 'Zero-knowledge survival: 1-2 words at a time with phonetic guidance.',
+      pedagogicalFocus: 'Zero-knowledge survival: prompts in English to teach target phrases step by step.',
     },
     'A1 - Beginner': {
       text: '¡Hola! Mucho gusto. Me alegro de practicar español contigo. ¿Cómo te llamas y de qué ciudad eres?',
@@ -50,11 +50,11 @@ export const LEVEL_GREETINGS: Record<string, Record<string, LevelGreeting>> = {
 
   french: {
     'A0 - Absolute Beginner (Zero Knowledge)': {
-      text: 'Bonjour! Bienvenue. (Hello! Welcome.) Don’t worry if you know zero French—we will discover the language together! Let’s start with your very first greeting: "Bonjour". Try saying it or click below!',
-      translation: 'Hello! Welcome. Don’t worry if you know zero French—we will discover the language together!',
+      text: 'Hello! Welcome! I am here to guide you step by step. In French, to say "Hello", we say "Bonjour" (bohn-ZHOOR). Can you try saying "Bonjour"?',
+      translation: 'Hello! Welcome. In French, to say "Hello", we say "Bonjour". Try saying "Bonjour"!',
       phonetic: 'bohn-ZHOOR',
       suggestedStarters: ['Bonjour!', 'Comment ça va?', 'How do I say thank you?'],
-      pedagogicalFocus: 'Zero-knowledge survival: phonetic breakdowns and foundational greetings.',
+      pedagogicalFocus: 'Zero-knowledge survival: prompts in English to teach target phrases step by step.',
     },
     'A1 - Beginner': {
       text: 'Bonjour! Enchanté(e). Je suis ravi de pratiquer le français avec vous. Comment vous appelez-vous et d’où venez-vous?',
@@ -91,11 +91,11 @@ export const LEVEL_GREETINGS: Record<string, Record<string, LevelGreeting>> = {
 
   german: {
     'A0 - Absolute Beginner (Zero Knowledge)': {
-      text: 'Hallo! Willkommen. (Hello! Welcome.) Don’t worry if you know zero German—we will master it together! Let’s start with your very first greeting: "Hallo!". Try saying it or click below!',
-      translation: 'Hello! Welcome. Don’t worry if you know zero German—we will learn together!',
+      text: 'Hello! Welcome! I am here to guide you step by step. In German, to say "Hello", we say "Hallo!" (HAH-loh). Can you try saying "Hallo!"?',
+      translation: 'Hello! Welcome. In German, to say "Hello", we say "Hallo!". Try saying "Hallo!"!',
       phonetic: 'HAH-loh',
       suggestedStarters: ['Hallo!', 'Wie geht es dir?', 'How do I say thank you?'],
-      pedagogicalFocus: 'Zero-knowledge survival: foundational greetings and phonetic pronunciation.',
+      pedagogicalFocus: 'Zero-knowledge survival: prompts in English to teach target phrases step by step.',
     },
     'A1 - Beginner': {
       text: 'Hallo! Freut mich sehr. Ich freue mich darauf, mit dir Deutsch zu üben. Wie heißt du und woher kommst du?',
@@ -125,11 +125,11 @@ export const LEVEL_GREETINGS: Record<string, Record<string, LevelGreeting>> = {
 
   japanese: {
     'A0 - Absolute Beginner (Zero Knowledge)': {
-      text: 'こんにちは！ようこそ。(Konnichiwa! Welcome.) Don’t worry if you know zero Japanese—we will take it step by step! Let’s begin with your first word: "こんにちは" (Konnichiwa = Hello). Try saying it or click below!',
-      translation: 'Hello! Welcome. Don’t worry if you know zero Japanese—we will take it step by step!',
+      text: 'Hello! Welcome! I am here to guide you step by step. In Japanese, to say "Hello", we say "こんにちは" (Konnichiwa). Can you try saying "Konnichiwa"?',
+      translation: 'Hello! Welcome. In Japanese, to say "Hello", we say "Konnichiwa". Try saying "Konnichiwa"!',
       phonetic: 'Kohn-nee-chee-wah',
       suggestedStarters: ['こんにちは (Konnichiwa)', 'ありがとうございます (Arigatou gozaimasu)', 'How do I say nice to meet you?'],
-      pedagogicalFocus: 'Zero-knowledge survival: Romaji guidance, basic polite greetings.',
+      pedagogicalFocus: 'Zero-knowledge survival: prompts in English to teach target phrases step by step.',
     },
     'A1 - Beginner': {
       text: 'こんにちは！はじめまして。日本語の練習をはじめましょう。お名前は何ですか？どこから来ましたか？',
@@ -186,11 +186,11 @@ export function getLevelGreeting(
 
   if (isA0) {
     return {
-      text: `Hello! I'm ${personaName}. Don't worry if you know zero ${languageName}—we will learn together step by step! Let's start with your very first greeting: "${samplePhrase}". Try saying it or click below!`,
-      translation: `(Welcome to your first ${languageName} lesson)`,
+      text: `Hello! I'm ${personaName}. Don't worry if you know zero ${languageName}—we will learn together step by step! To say 'Hello' in ${languageName}, we say '${samplePhrase}'. Try saying '${samplePhrase}'!`,
+      translation: `(In ${languageName}, to say 'Hello', we say '${samplePhrase}')`,
       phonetic: samplePhrase,
       suggestedStarters: [samplePhrase, 'Hello!', 'How do I say thank you?'],
-      pedagogicalFocus: 'Zero-knowledge survival: foundational greetings and phonetic pronunciation.',
+      pedagogicalFocus: 'Zero-knowledge survival: prompts in English to teach target phrases step by step.',
     };
   }
 
