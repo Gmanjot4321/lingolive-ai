@@ -596,7 +596,12 @@ export default function App() {
 
   // Generate Session Fluency Summary & CEFR Report (Fast execution)
   const handleGenerateSummary = async (customTranscript?: ChatMessage[]) => {
-    const transcriptToAnalyze = customTranscript || messages;
+    const transcriptToAnalyze =
+      customTranscript && customTranscript.length > 0
+        ? customTranscript
+        : messages.length > 0
+        ? messages
+        : [createInitialWelcomeMessage(currentLanguage, proficiencyLevel, currentScenario)];
     setIsGeneratingSummary(true);
 
     const controller = new AbortController();
@@ -670,7 +675,7 @@ export default function App() {
       goals: prev.goals.map((g) => (g.id === goalId ? { ...g, completed } : g)),
     }));
     if (completed) {
-      handleRecordStudy(2, 25);
+      handleRecordStudy(2, 10);
       handleIncrementLevelPractice(1);
     }
   };
@@ -887,7 +892,8 @@ export default function App() {
                   proficiencyLevel={proficiencyLevel}
                   onEndCallAndSummarize={(liveTranscript) => {
                     const speechTurns = Math.max(1, Math.round(liveTranscript.length / 2));
-                    handleRecordStudy(5, 50, { speaking: speechTurns, listening: speechTurns });
+                    const earnedVoiceXP = Math.min(30, 10 + speechTurns * 2);
+                    handleRecordStudy(5, earnedVoiceXP, { speaking: speechTurns, listening: speechTurns });
                     handleGenerateSummary(liveTranscript);
                   }}
                   onSaveWord={handleSaveWord}
@@ -920,7 +926,7 @@ export default function App() {
                   }}
                   onSaveWord={handleSaveWord}
                   onUpdateScenarioGoal={handleToggleScenarioGoal}
-                  onGenerateSessionSummary={() => handleGenerateSummary()}
+                  onGenerateSessionSummary={() => handleGenerateSummary(messages)}
                   isGeneratingSummary={isGeneratingSummary}
                   onResetChat={handleResetChat}
                   onPlayAudio={() => {
