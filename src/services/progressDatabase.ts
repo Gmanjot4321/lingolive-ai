@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { UserProfile, SavedWord, MockTestResult, ProficiencyLevel } from '../types';
+import { computeLeague } from '../utils/streakManager';
 
 export interface AuthResponse {
   success: boolean;
@@ -261,10 +262,11 @@ export async function loadUserProfileFromDb(userIdOrEmail?: string): Promise<Use
       const json = await res.json();
       if (json.success && json.profile) {
         const p = json.profile;
+        const xp = p.xp === 835 || p.xp === 680 ? 0 : (p.xp || 0);
         return {
           ...p,
-          xp: p.xp === 835 || p.xp === 680 ? 0 : (p.xp || 0),
-          league: p.xp >= 3000 ? 'Diamond' : p.xp >= 1500 ? 'Gold' : p.xp >= 600 ? 'Silver' : 'Bronze',
+          xp,
+          league: computeLeague(xp),
         };
       }
     }
@@ -289,10 +291,11 @@ export function loadLocalProfile(): UserProfile | null {
     if (raw) {
       const parsed = JSON.parse(raw) as UserProfile;
       if (parsed && parsed.name && parsed.name !== 'Polyglot Learner') {
+        const xp = parsed.xp === 835 || parsed.xp === 680 ? 0 : (parsed.xp || 0);
         return {
           ...parsed,
-          xp: parsed.xp === 835 || parsed.xp === 680 ? 0 : (parsed.xp || 0),
-          league: parsed.xp >= 3000 ? 'Diamond' : parsed.xp >= 1500 ? 'Gold' : parsed.xp >= 600 ? 'Silver' : 'Bronze',
+          xp,
+          league: computeLeague(xp),
         };
       }
     }
