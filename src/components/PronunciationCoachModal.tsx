@@ -95,7 +95,7 @@ export const PronunciationCoachModal: React.FC<PronunciationCoachModalProps> = (
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert('Speech Recognition is not supported in this browser. Please use Chrome or Edge.');
+      console.warn('Speech Recognition is not supported in this browser. Please use a browser supporting Web Speech API.');
       return;
     }
 
