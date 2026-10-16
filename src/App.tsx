@@ -31,7 +31,7 @@ import {
 } from './types';
 import { SUPPORTED_LANGUAGES, PARTNER_PERSONAS, PRACTICE_SCENARIOS, PROFICIENCY_LEVELS } from './data/languages';
 import { LEVEL_GREETINGS } from './data/levelGreetings';
-import { Mic, MessageSquare, Volume2, Award, Zap, GraduationCap, BarChart3 } from 'lucide-react';
+import { Mic, MessageSquare, Volume2, Award, Zap, GraduationCap, BarChart3, Sparkles, Loader2 } from 'lucide-react';
 import {
   migrateOrInitializeProfile,
   createCleanDefaultProfile,
@@ -600,7 +600,7 @@ export default function App() {
     setIsGeneratingSummary(true);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3200);
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
 
     const fallbackReport = {
       overallScore: Math.min(96, Math.max(80, 82 + Math.min(12, transcriptToAnalyze.length * 2))),
@@ -895,6 +895,7 @@ export default function App() {
                     setLookupWordInfo({ word, sentence });
                   }}
                   onUpdateScenarioGoal={handleToggleScenarioGoal}
+                  isGeneratingSummary={isGeneratingSummary}
                 />
               ) : (
                 <InteractiveChat
@@ -1054,6 +1055,25 @@ export default function App() {
           onSelectScenario={(sc) => setCurrentScenario(sc)}
           onClose={() => setScenarioModalOpen(false)}
         />
+      )}
+
+      {/* Fluency Evaluation Loading Modal */}
+      {isGeneratingSummary && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md animate-in fade-in p-4">
+          <div className="p-6 sm:p-8 rounded-3xl glass-card-neon border border-pink-500/40 text-center max-w-sm w-full shadow-2xl">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-[0_0_25px_rgba(236,72,153,0.55)]">
+              <Sparkles className="w-7 h-7 text-white animate-spin" />
+            </div>
+            <h3 className="text-base font-bold text-white">Analyzing Fluency</h3>
+            <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+              Evaluating CEFR mastery, grammar nuances, conversational responsiveness, and scenario goals...
+            </p>
+            <div className="mt-5 flex items-center justify-center gap-2 text-xs text-pink-300 font-mono font-bold bg-white/5 py-2 px-3 rounded-xl border border-white/10">
+              <Loader2 className="w-4 h-4 animate-spin text-cyan-300" />
+              <span>Generating Fluency Report...</span>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Session Fluency Summary Modal */}
