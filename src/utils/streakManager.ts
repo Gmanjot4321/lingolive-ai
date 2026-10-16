@@ -218,62 +218,12 @@ export const migrateOrInitializeProfile = (existing: UserProfile | null): UserPr
     }
   }
 
-  // Detect if existing profile needs clean zero-XP baseline migration
-  const needsXPZeroStart = !localStorage.getItem(XP_ZERO_START_KEY) || existing.xp === 835 || existing.xp === 680 || existing.xp === 50;
-
-  // Detect if existing profile contains the legacy mock streak template data
-  const hasLegacyDummySeed =
-    !localStorage.getItem(PURGE_KEY) ||
-    existing.streakDays === 4 ||
-    existing.totalStudyMinutes === 20 ||
-    existing.totalStudyMinutes === 65 ||
-    (existing.activeDates && existing.activeDates.length === 4 && existing.totalStudyMinutes === 20);
-
-  if (hasLegacyDummySeed || needsXPZeroStart) {
-    try {
-      localStorage.setItem(PURGE_KEY, 'true');
-      localStorage.setItem(XP_ZERO_START_KEY, 'true');
-    } catch {}
-    const rawXP = needsXPZeroStart ? 0 : (typeof existing.xp === 'number' ? existing.xp : 0);
-    const cleansed: UserProfile = {
-      ...existing,
-      streakDays: hasLegacyDummySeed ? 0 : (existing.streakDays || 0),
-      longestStreak: hasLegacyDummySeed ? 0 : (existing.longestStreak || 0),
-      activeDates: hasLegacyDummySeed ? [] : (existing.activeDates || []),
-      dailyStudyMinutes: hasLegacyDummySeed ? {} : (existing.dailyStudyMinutes || {}),
-      totalStudyMinutes: hasLegacyDummySeed ? 0 : (existing.totalStudyMinutes || 0),
-      skillStats: existing.skillStats || {
-        speakingCount: 0,
-        speakingMinutes: 0,
-        listeningCount: 0,
-        listeningMinutes: 0,
-        readingCount: 0,
-        readingMinutes: 0,
-        writingCount: 0,
-        writingMinutes: 0,
-      },
-      streakFreezeUsedDates: hasLegacyDummySeed ? [] : (existing.streakFreezeUsedDates || []),
-      claimedMilestones: hasLegacyDummySeed ? [] : (existing.claimedMilestones || []),
-      xp: rawXP,
-      league: computeLeague(rawXP),
-    };
-    try {
-      localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(cleansed));
-    } catch {}
-    return cleansed;
-  }
-
-  // For genuine profiles, calculate streak strictly from actual practice
+  // Calculate streak from recorded active dates and practice
   const dailyStudyMinutes = existing.dailyStudyMinutes || {};
-  // Only consider dates where study time was genuinely recorded (> 0)
-  const activeDates = (existing.activeDates || []).filter(
-    (dKey) => typeof dailyStudyMinutes[dKey] === 'number' && dailyStudyMinutes[dKey] > 0
-  );
-
-  const totalStudyMinutes = Object.values(dailyStudyMinutes).reduce(
-    (acc, m) => acc + (typeof m === 'number' && m > 0 ? m : 0),
-    0
-  );
+  const activeDates = Array.isArray(existing.activeDates) ? existing.activeDates : [];
+  const totalStudyMinutes = typeof existing.totalStudyMinutes === 'number'
+    ? existing.totalStudyMinutes
+    : Object.values(dailyStudyMinutes).reduce((acc, m) => acc + (typeof m === 'number' ? m : 0), 0);
 
   const calculation = calculateStreak({
     ...existing,
@@ -289,8 +239,8 @@ export const migrateOrInitializeProfile = (existing: UserProfile | null): UserPr
     ...existing,
     xp: currentXP,
     league: computeLeague(currentXP),
-    streakDays: calculation.currentStreak,
-    longestStreak: Math.max(calculation.longestStreak, calculation.currentStreak),
+    streakDays: Math.max(calculation.currentStreak, existing.streakDays || 0),
+    longestStreak: Math.max(calculation.longestStreak, existing.longestStreak || 0, calculation.currentStreak),
     activeDates,
     dailyStudyMinutes,
     totalStudyMinutes,
