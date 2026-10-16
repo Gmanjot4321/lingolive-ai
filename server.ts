@@ -34,12 +34,14 @@ function getGeminiClient(): GoogleGenAI {
   });
 }
 
-// Resilient model caller with retry and multi-model fallback for 503/429/high-demand
-// We prioritize gemini-3.1-flash-lite first for rapid conversational response times and high availability
+// Resilient model caller with retry and multi-model fallback
+// Prioritizing verified, ultra-fast low-latency models for real-time conversation
 const TEXT_MODEL_FALLBACKS = [
+  "gemini-flash-lite-latest",
+  "gemini-3.5-flash-lite",
+  "gemini-3.5-flash",
+  "gemini-3.6-flash",
   "gemini-3.1-flash-lite",
-  "gemini-flash-latest",
-  "gemini-3.8-flash",
 ];
 
 async function generateContentWithRetryAndFallback(
@@ -279,43 +281,74 @@ Provide the partner's next conversational response, evaluate goal completion bas
     res.json({ success: true, data: parsed });
   } catch (error: any) {
     console.error("Error in /api/chat:", error);
-    // Provide a resilient fallback response if Google servers are under extreme transient load
-    const fallbackReply = req.body?.targetLanguage === "Japanese"
-      ? "こんにちは！もう一度話しかけてみてください。"
-      : req.body?.targetLanguage === "French"
-      ? "Bonjour ! Comment allez-vous aujourd'hui ?"
-      : req.body?.targetLanguage === "German"
-      ? "Hallo! Wie geht es Ihnen heute?"
-      : req.body?.targetLanguage === "Italian"
-      ? "Ciao! Come va oggi?"
-      : "¡Hola! Cuéntame más sobre esto, ¿cómo estás hoy?";
+    const targetLang = req.body?.targetLanguage || "French";
+    const isA0Catch = (req.body?.proficiencyLevel || "").toLowerCase().includes("a0") ||
+                      (req.body?.proficiencyLevel || "").toLowerCase().includes("zero") ||
+                      (req.body?.proficiencyLevel || "").toLowerCase().includes("scratch");
 
-    const fallbackOptions = [
-      {
-        text: req.body?.targetLanguage === "Spanish" ? "Estoy muy bien, gracias. ¿Y tú?" : "I am doing well, thank you! And you?",
-        translation: "I am doing well, thank you. And you?",
-        isCorrect: true,
-        explanation: "Polite, natural, and directly reciprocal response.",
-      },
-      {
-        text: req.body?.targetLanguage === "Spanish" ? "Yo soy bien gracias." : "I am (permanently) well.",
-        translation: "I am well (incorrect verb ser)",
-        isCorrect: false,
-        explanation: "Incorrect state verb: emotions and current states require 'estar', not 'ser'.",
-      },
-      {
-        text: req.body?.targetLanguage === "Spanish" ? "No me gusta la comida." : "I do not like food.",
-        translation: "I don't like the food.",
-        isCorrect: false,
-        explanation: "Contextually irrelevant to a standard greeting inquiry.",
-      },
-    ];
+    let fallbackReply = "";
+    let fallbackTranslation = "";
+    let fallbackOptions: any[] = [];
+
+    if (isA0Catch) {
+      if (targetLang === "French") {
+        fallbackReply = 'Hello! Welcome. In French, to say "Hello", we say "Bonjour" (bohn-ZHOOR). Can you try saying "Bonjour"?';
+        fallbackTranslation = 'Hello! Welcome. In French, to say "Hello", we say "Bonjour". Can you try saying "Bonjour"?';
+        fallbackOptions = [
+          { text: "Bonjour !", translation: "Hello!", isCorrect: true, explanation: "Standard polite greeting in French." },
+          { text: "Merci !", translation: "Thank you!", isCorrect: false, explanation: "Means 'Thank you', not 'Hello'." },
+          { text: "Au revoir !", translation: "Goodbye!", isCorrect: false, explanation: "Means 'Goodbye', not 'Hello'." },
+        ];
+      } else if (targetLang === "German") {
+        fallbackReply = 'Hello! Welcome. In German, to say "Hello", we say "Hallo" (HAH-loh). Can you try saying "Hallo"?';
+        fallbackTranslation = 'Hello! Welcome. In German, to say "Hello", we say "Hallo". Can you try saying "Hallo"?';
+        fallbackOptions = [
+          { text: "Hallo !", translation: "Hello!", isCorrect: true, explanation: "Standard greeting in German." },
+          { text: "Danke !", translation: "Thank you!", isCorrect: false, explanation: "Means 'Thank you'." },
+          { text: "Tschüss !", translation: "Bye!", isCorrect: false, explanation: "Means 'Bye'." },
+        ];
+      } else {
+        fallbackReply = `Hello! Welcome. In ${targetLang}, to say "Hello", we say "¡Hola!" (OH-lah). Can you try saying "¡Hola!"?`;
+        fallbackTranslation = `Hello! Welcome. In ${targetLang}, to say "Hello", we say "¡Hola!". Can you try saying "¡Hola!"?`;
+        fallbackOptions = [
+          { text: "¡Hola!", translation: "Hello!", isCorrect: true, explanation: "Standard greeting." },
+          { text: "Gracias", translation: "Thank you", isCorrect: false, explanation: "Means 'Thank you'." },
+          { text: "Adiós", translation: "Goodbye", isCorrect: false, explanation: "Means 'Goodbye'." },
+        ];
+      }
+    } else {
+      if (targetLang === "French") {
+        fallbackReply = "Bonjour ! Je suis ravi d'échanger avec vous. Comment allez-vous aujourd'hui ?";
+        fallbackTranslation = "Hello! I am delighted to speak with you. How are you today?";
+        fallbackOptions = [
+          { text: "Je vais très bien, merci ! Et vous ?", translation: "I am doing very well, thank you! And you?", isCorrect: true, explanation: "Natural, polite response." },
+          { text: "Je suis bien merci.", translation: "I am well (awkward literal phrasing)", isCorrect: false, explanation: "In French, use 'Je vais bien' rather than 'Je suis bien'." },
+          { text: "Non merci, je ne veux pas.", translation: "No thanks, I don't want to.", isCorrect: false, explanation: "Contextually unsuited for a greeting." },
+        ];
+      } else if (targetLang === "German") {
+        fallbackReply = "Hallo! Schön, mit Ihnen zu sprechen. Wie geht es Ihnen heute?";
+        fallbackTranslation = "Hello! Nice to speak with you. How are you today?";
+        fallbackOptions = [
+          { text: "Mir geht es sehr gut, danke! Und Ihnen?", translation: "I am doing very well, thank you! And you?", isCorrect: true, explanation: "Correct dative construction in German." },
+          { text: "Ich bin gut danke.", translation: "I am good (incorrect phrasing)", isCorrect: false, explanation: "In German, personal state requires 'Mir geht es gut', not 'Ich bin gut'." },
+          { text: "Nein danke.", translation: "No thanks.", isCorrect: false, explanation: "Contextually inappropriate for a greeting." },
+        ];
+      } else {
+        fallbackReply = "¡Hola! Qué gusto saludarte. ¿Cómo estás hoy?";
+        fallbackTranslation = "Hello! Nice to greet you. How are you today?";
+        fallbackOptions = [
+          { text: "¡Estoy muy bien, gracias! ¿Y tú?", translation: "I am very well, thank you! And you?", isCorrect: true, explanation: "Polite, natural, and reciprocal response." },
+          { text: "Yo soy bien gracias.", translation: "I am well (incorrect ser)", isCorrect: false, explanation: "Emotions and current states require 'estar', not 'ser'." },
+          { text: "No me gusta la comida.", translation: "I don't like food.", isCorrect: false, explanation: "Contextually irrelevant." },
+        ];
+      }
+    }
 
     res.json({
       success: true,
       data: {
         reply: fallbackReply,
-        replyTranslation: "Hello! Tell me more about this, how are you today?",
+        replyTranslation: fallbackTranslation,
         suggestedReplies: [fallbackOptions[0].text, fallbackOptions[1].text],
         replyOptions: fallbackOptions,
         goalsCompleted: [],
