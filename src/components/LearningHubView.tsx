@@ -491,7 +491,9 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
           if (prev <= 1) {
             setGameActive(false);
             setGameFinished(true);
-            onAwardXP(score * 10 + 50, 'reading');
+            // Realistic XP award: ~15 to 25 XP per 45s sprint, aligned with standard language learning apps
+            const sprintEarnedXP = Math.min(30, Math.max(5, Math.round(score / 10) + 5));
+            onAwardXP(sprintEarnedXP, 'reading');
             return 0;
           }
           return prev - 1;
@@ -563,9 +565,10 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
   };
 
   const userXP = user?.xp || 0;
-  const currentTier = userXP >= 3000 ? 'Diamond' : userXP >= 1500 ? 'Gold' : userXP >= 600 ? 'Silver' : 'Bronze';
-  const nextTierXP = userXP >= 3000 ? 5000 : userXP >= 1500 ? 3000 : userXP >= 600 ? 1500 : 600;
-  const tierProgressPercent = Math.min(100, Math.round((userXP / nextTierXP) * 100));
+  const currentTier = userXP >= 2000 ? 'Diamond' : userXP >= 1000 ? 'Gold' : userXP >= 400 ? 'Silver' : 'Bronze';
+  const nextTierXP = userXP >= 2000 ? 3500 : userXP >= 1000 ? 2000 : userXP >= 400 ? 1000 : 400;
+  const prevTierXP = userXP >= 2000 ? 2000 : userXP >= 1000 ? 1000 : userXP >= 400 ? 400 : 0;
+  const tierProgressPercent = Math.min(100, Math.max(0, Math.round(((userXP - prevTierXP) / (nextTierXP - prevTierXP)) * 100)));
 
   return (
     <div className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-6">
@@ -1002,7 +1005,7 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
               <h4 className="text-2xl font-black text-white">Round #{sprintRound} Completed!</h4>
               <p className="text-sm text-slate-200">
                 You scored <span className="font-bold text-amber-300">{score} points</span> and earned{' '}
-                <span className="font-bold text-emerald-400">+{score * 10 + 50} XP</span>!
+                <span className="font-bold text-emerald-400">+{Math.min(30, Math.max(5, Math.round(score / 10) + 5))} XP</span>!
               </p>
               <p className="text-xs text-cyan-300">
                 A brand new randomized set of {currentLanguage.name} words is prepared for your next sprint.
@@ -1100,10 +1103,10 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
             {/* Tier Ladders */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
               {[
-                { name: 'Bronze', xp: '0 - 599 XP', emoji: '🥉', current: currentTier === 'Bronze' },
-                { name: 'Silver', xp: '600 - 1,499 XP', emoji: '🥈', current: currentTier === 'Silver' },
-                { name: 'Gold', xp: '1,500 - 2,999 XP', emoji: '🥇', current: currentTier === 'Gold' },
-                { name: 'Diamond', xp: '3,000+ XP', emoji: '💎', current: currentTier === 'Diamond' },
+                { name: 'Bronze', xp: '0 - 399 XP', emoji: '🥉', current: currentTier === 'Bronze' },
+                { name: 'Silver', xp: '400 - 999 XP', emoji: '🥈', current: currentTier === 'Silver' },
+                { name: 'Gold', xp: '1,000 - 1,999 XP', emoji: '🥇', current: currentTier === 'Gold' },
+                { name: 'Diamond', xp: '2,000+ XP (1+ Mo)', emoji: '💎', current: currentTier === 'Diamond' },
               ].map((tier, idx) => (
                 <div
                   key={idx}
