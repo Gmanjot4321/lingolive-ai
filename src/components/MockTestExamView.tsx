@@ -97,11 +97,23 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
     let interval: any;
     if (examStarted && isTimerRunning && secondsRemaining > 0 && !examResult) {
       interval = setInterval(() => {
-        setSecondsRemaining((prev) => prev - 1);
+        setSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
     }
     return () => clearInterval(interval);
   }, [examStarted, isTimerRunning, secondsRemaining, examResult]);
+
+  // Auto-submit when time expires
+  useEffect(() => {
+    if (examStarted && secondsRemaining === 0 && !examResult && !isSubmitting) {
+      handleSubmitExam();
+    }
+  }, [examStarted, secondsRemaining, examResult, isSubmitting]);
 
   // Generate novel on-demand AI exam in background without blocking screen
   const handleGenerateFreshAIExam = async () => {
@@ -154,11 +166,15 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
     window.speechSynthesis.speak(utterance);
   };
 
-  // Speaking microphone recognition
+  // Speaking microphone recognition without alert or duplicate text
+  const [speechNotice, setSpeechNotice] = useState<string | null>(null);
+
   const toggleSpeakingRecording = () => {
     if (isRecordingSpeaking) {
       if (recognitionRef.current) {
-        recognitionRef.current.stop();
+        try {
+          recognitionRef.current.stop();
+        } catch {}
       }
       setIsRecordingSpeaking(false);
       return;
@@ -168,7 +184,8 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert('Speech recognition is not supported in this browser. You can type your spoken answer.');
+      setSpeechNotice('Speech recognition is not supported in this browser. You can type your spoken answer.');
+      setTimeout(() => setSpeechNotice(null), 5000);
       return;
     }
 
@@ -180,18 +197,27 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
 
       recognition.onstart = () => {
         setIsRecordingSpeaking(true);
+        setSpeechNotice(null);
       };
 
       recognition.onresult = (event: any) => {
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
+        let final = '';
+        let interim = '';
+        for (let i = 0; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            final += event.results[i][0].transcript + ' ';
+          } else {
+            interim += event.results[i][0].transcript;
+          }
         }
-        setSpeakingTranscript((prev) => (prev ? `${prev} ${transcript}` : transcript));
+        const fullSpoken = (final + interim).trim();
+        if (fullSpoken) {
+          setSpeakingTranscript(fullSpoken);
+        }
       };
 
       recognition.onerror = (e: any) => {
-        console.warn('Speech recognition error:', e);
+        console.warn('Speech recognition warning:', e);
         setIsRecordingSpeaking(false);
       };
 
@@ -204,28 +230,57 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
     } catch (err) {
       console.error('Speech recognition failed to start:', err);
       setIsRecordingSpeaking(false);
+      setSpeechNotice('Microphone access was denied or unavailable. You can type your answer below.');
+      setTimeout(() => setSpeechNotice(null), 5000);
     }
   };
 
-  // Submit and evaluate exam
+  // Submit and evaluate exam (Always completes and displays diagnostic result)
   const handleSubmitExam = async () => {
+    if (isSubmitting) return;
     setIsSubmitting(true);
     setIsTimerRunning(false);
 
+    // Stop speaking recording or audio playback if active
+    if (isRecordingSpeaking) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+      setIsRecordingSpeaking(false);
+    }
+    if (isPlayingAudio) {
+      if ('speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+        } catch {}
+      }
+      setIsPlayingAudio(false);
+    }
+
+    const listeningItems = Array.isArray(exam?.listening) ? exam.listening : [];
+    const readingItems = Array.isArray(exam?.reading) ? exam.reading : [];
+    const listeningTotal = Math.max(listeningItems.length, 1);
+    const readingTotal = Math.max(readingItems.length, 1);
+
     // Calculate preliminary scores for objective sections
     let listeningCorrect = 0;
-    exam.listening.forEach((item, idx) => {
+    listeningItems.forEach((item, idx) => {
       if (listeningAnswers[idx] === item.correctAnswerIndex) {
         listeningCorrect++;
       }
     });
 
     let readingCorrect = 0;
-    exam.reading.forEach((item, idx) => {
+    readingItems.forEach((item, idx) => {
       if (readingAnswers[idx] === item.correctAnswerIndex) {
         readingCorrect++;
       }
     });
+
+    const scaledListening = Math.round((listeningCorrect / listeningTotal) * 25);
+    const scaledReading = Math.round((readingCorrect / readingTotal) * 25);
 
     try {
       const res = await fetch('/api/evaluate-mock-test', {
@@ -235,56 +290,69 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
           targetLanguage: currentLanguage.name,
           cefrLevel: currentCefr,
           listeningScore: listeningCorrect,
-          listeningTotal: exam.listening.length,
+          listeningTotal,
           readingScore: readingCorrect,
-          readingTotal: exam.reading.length,
-          writingSubmission,
-          speakingTranscript,
+          readingTotal,
+          writingSubmission: writingSubmission.trim(),
+          speakingTranscript: speakingTranscript.trim(),
         }),
       });
 
-      const data = await res.json();
-      const evalData = data?.evaluation || data?.result || data?.data;
+      let evalData: any = null;
+      if (res.ok) {
+        const data = await res.json();
+        evalData = data?.evaluation || data?.result || data?.data;
+      }
 
       if (evalData) {
         const writingEval = typeof evalData.writingFeedback === 'object' && evalData.writingFeedback !== null
           ? evalData.writingFeedback
           : {
-              score: evalData.writingScore ?? 20,
+              score: evalData.writingScore ?? (writingSubmission.trim().length > 30 ? 21 : 16),
               grammarScore: 8,
               vocabularyScore: 8,
-              feedback: typeof evalData.writingFeedback === 'string' ? evalData.writingFeedback : 'Written expression is cohesive and communicative.',
+              feedback: typeof evalData.writingFeedback === 'string' && evalData.writingFeedback.trim()
+                ? evalData.writingFeedback
+                : 'Written expression is cohesive and communicative.',
             };
 
         const speakingEval = typeof evalData.speakingFeedback === 'object' && evalData.speakingFeedback !== null
           ? evalData.speakingFeedback
           : {
-              score: evalData.speakingScore ?? 20,
+              score: evalData.speakingScore ?? (speakingTranscript.trim().length > 20 ? 22 : 16),
               fluencyScore: 8,
               pronunciationScore: 8,
-              feedback: typeof evalData.speakingFeedback === 'string' ? evalData.speakingFeedback : 'Clear delivery with authentic vocabulary.',
+              feedback: typeof evalData.speakingFeedback === 'string' && evalData.speakingFeedback.trim()
+                ? evalData.speakingFeedback
+                : 'Clear delivery with authentic vocabulary.',
             };
 
+        const calculatedOverall = evalData.overallScore ?? (
+          (evalData.listeningScore ?? scaledListening) +
+          (evalData.readingScore ?? scaledReading) +
+          (evalData.writingScore ?? (typeof writingEval.score === 'number' ? writingEval.score : 20)) +
+          (evalData.speakingScore ?? (typeof speakingEval.score === 'number' ? speakingEval.score : 20))
+        );
+
         const fullResult: MockTestResult = {
-          id: `result-${Date.now()}`,
-          testTitle: exam.title,
+          id: `exam-result-${Date.now()}`,
+          testTitle: exam.title || `${currentLanguage.name} CEFR Mock Exam`,
           targetLanguage: currentLanguage.name,
-          cefrLevel: currentCefr,
+          cefrLevel: evalData.cefrLevel || currentCefr,
           completedAt: new Date().toISOString(),
-          listeningScore: evalData.listeningScore ?? Math.round((listeningCorrect / Math.max(exam.listening.length, 1)) * 25),
-          listeningFeedback: typeof evalData.listeningFeedback === 'string' ? evalData.listeningFeedback : 'Demonstrated good comprehension of standard dialogue excerpts.',
-          readingScore: evalData.readingScore ?? Math.round((readingCorrect / Math.max(exam.reading.length, 1)) * 25),
-          readingFeedback: typeof evalData.readingFeedback === 'string' ? evalData.readingFeedback : 'Understands key informational notices and contextual points.',
+          listeningScore: evalData.listeningScore ?? scaledListening,
+          listeningFeedback: typeof evalData.listeningFeedback === 'string' && evalData.listeningFeedback.trim()
+            ? evalData.listeningFeedback
+            : 'Demonstrated good comprehension of standard dialogue excerpts.',
+          readingScore: evalData.readingScore ?? scaledReading,
+          readingFeedback: typeof evalData.readingFeedback === 'string' && evalData.readingFeedback.trim()
+            ? evalData.readingFeedback
+            : 'Understands key informational notices and contextual points.',
           writingScore: evalData.writingScore ?? (typeof writingEval.score === 'number' ? writingEval.score : 20),
           writingFeedback: writingEval,
           speakingScore: evalData.speakingScore ?? (typeof speakingEval.score === 'number' ? speakingEval.score : 20),
           speakingFeedback: speakingEval,
-          overallScore: evalData.overallScore ?? (
-            (evalData.listeningScore ?? Math.round((listeningCorrect / Math.max(exam.listening.length, 1)) * 25)) +
-            (evalData.readingScore ?? Math.round((readingCorrect / Math.max(exam.reading.length, 1)) * 25)) +
-            (evalData.writingScore ?? 20) +
-            (evalData.speakingScore ?? 20)
-          ),
+          overallScore: calculatedOverall,
           improvementRoadmap: Array.isArray(evalData.improvementRoadmap) && evalData.improvementRoadmap.length > 0
             ? evalData.improvementRoadmap
             : [
@@ -293,6 +361,16 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
                 'Practice past-tense irregular conjugations in spontaneous speech',
               ],
         };
+
+        // Safety backup direct to localStorage
+        try {
+          const raw = localStorage.getItem('lingolive_mock_test_history');
+          const existing = raw ? JSON.parse(raw) : [];
+          const updated = [fullResult, ...existing.filter((t: any) => t?.id !== fullResult.id)];
+          localStorage.setItem('lingolive_mock_test_history', JSON.stringify(updated));
+        } catch (e) {
+          console.warn('Direct exam save warning:', e);
+        }
 
         setExamResult(fullResult);
         if (onCompleteExam) onCompleteExam(fullResult);
@@ -312,35 +390,41 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
       }
     } catch (err) {
       console.error('Error evaluating exam, generating calibrated diagnostic fallback:', err);
-      const lScore = Math.round((listeningCorrect / Math.max(exam.listening.length, 1)) * 25);
-      const rScore = Math.round((readingCorrect / Math.max(exam.reading.length, 1)) * 25);
-      const wScore = writingSubmission.trim().length > 30 ? 21 : 16;
-      const sScore = speakingTranscript.trim().length > 20 ? 22 : 17;
-      const total = lScore + rScore + wScore + sScore;
+      const wScore = writingSubmission.trim().length > 30 ? 21 : writingSubmission.trim().length > 10 ? 17 : 12;
+      const sScore = speakingTranscript.trim().length > 20 ? 22 : speakingTranscript.trim().length > 5 ? 17 : 12;
+      const total = scaledListening + scaledReading + wScore + sScore;
 
       const fallbackResult: MockTestResult = {
-        id: `result-${Date.now()}`,
-        testTitle: exam.title,
+        id: `exam-result-${Date.now()}`,
+        testTitle: exam.title || `${currentLanguage.name} CEFR Mock Exam`,
         targetLanguage: currentLanguage.name,
-        cefrLevel: currentCefr,
+        cefrLevel: total >= 80 ? (currentCefr === 'A1' ? 'A2' : currentCefr) : currentCefr,
         completedAt: new Date().toISOString(),
-        listeningScore: lScore,
-        listeningFeedback: 'Demonstrated solid comprehension of the dialogue segments and contextual cues.',
-        readingScore: rScore,
-        readingFeedback: 'Understands main informational notices and passage details accurately.',
+        listeningScore: scaledListening,
+        listeningFeedback: listeningCorrect > 0
+          ? 'Demonstrated solid comprehension of the dialogue segments and contextual cues.'
+          : 'Listening comprehension requires additional practice with native audio tracks.',
+        readingScore: scaledReading,
+        readingFeedback: readingCorrect > 0
+          ? 'Understands main informational notices and passage details accurately.'
+          : 'Focus on contextual deduction and key vocabulary markers in reading texts.',
         writingScore: wScore,
         writingFeedback: {
           score: wScore,
           grammarScore: Math.min(25, wScore + 1),
           vocabularyScore: wScore,
-          feedback: 'Written submission addressed the prompt with good grammatical cohesion.',
+          feedback: writingSubmission.trim()
+            ? 'Written submission addressed the prompt with good grammatical cohesion.'
+            : 'No writing submission detected. Practice daily writing prompts to build sentence mastery.',
         },
         speakingScore: sScore,
         speakingFeedback: {
           score: sScore,
           fluencyScore: Math.min(25, sScore + 1),
           pronunciationScore: sScore,
-          feedback: 'Spoken expression was clear, intelligible, and demonstrated conversational confidence.',
+          feedback: speakingTranscript.trim()
+            ? 'Spoken expression was clear, intelligible, and demonstrated conversational confidence.'
+            : 'No spoken answer recorded. Oral practice aloud develops fluid communicative confidence.',
         },
         overallScore: total,
         improvementRoadmap: [
@@ -349,6 +433,16 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
           'Practice spontaneous verb conjugations and idioms in daily speaking.',
         ],
       };
+
+      // Safety backup direct to localStorage
+      try {
+        const raw = localStorage.getItem('lingolive_mock_test_history');
+        const existing = raw ? JSON.parse(raw) : [];
+        const updated = [fallbackResult, ...existing.filter((t: any) => t?.id !== fallbackResult.id)];
+        localStorage.setItem('lingolive_mock_test_history', JSON.stringify(updated));
+      } catch (e) {
+        console.warn('Direct exam save warning:', e);
+      }
 
       setExamResult(fallbackResult);
       if (onCompleteExam) onCompleteExam(fallbackResult);
@@ -972,6 +1066,12 @@ export const MockTestExamView: React.FC<MockTestExamViewProps> = ({
                   Target duration: ~{exam.speaking.recommendedDurationSeconds} seconds
                 </p>
               </div>
+
+              {speechNotice && (
+                <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-400/40 text-amber-200 text-xs font-semibold">
+                  {speechNotice}
+                </div>
+              )}
 
               {/* Spoken Transcript preview & manual edit */}
               <div className="w-full text-left space-y-1.5 pt-2">
