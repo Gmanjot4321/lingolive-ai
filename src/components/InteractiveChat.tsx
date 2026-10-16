@@ -159,7 +159,7 @@ export const InteractiveChat: React.FC<InteractiveChatProps> = ({
 
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert('Speech Recognition is not supported in this browser. You can type your response instead!');
+      console.warn('Speech Recognition is not supported in this browser. You can type your response instead.');
       return;
     }
 
