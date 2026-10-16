@@ -1,1 +1,220 @@
-aW1wb3J0IFJlYWN0LCB7IHVzZUVmZmVjdCB9IGZyb20gJ3JlYWN0JzsKaW1wb3J0IHsKICBBd2FyZCwKICBTcGFya2xlcywKICBDaGVja0NpcmNsZTIsCiAgVHJlbmRpbmdVcCwKICBBcnJvd1JpZ2h0LAogIERvd25sb2FkLAogIFgsCn0gZnJvbSAnbHVjaWRlLXJlYWN0JzsKaW1wb3J0IGNvbmZldHRpIGZyb20gJ2NhbnZhcy1jb25mZXR0aSc7CmltcG9ydCB7IFNlc3Npb25SZXBvcnQsIFByYWN0aWNlU2NlbmFyaW8sIExhbmd1YWdlT3B0aW9uIH0gZnJvbSAnLi4vdHlwZXMnOwoKaW50ZXJmYWNlIFNlc3Npb25TdW1tYXJ5TW9kYWxQcm9wcyB7CiAgcmVwb3J0OiBTZXNzaW9uUmVwb3J0OwogIHNjZW5hcmlvOiBQcmFjdGljZVNjZW5hcmlvOwogIGxhbmd1YWdlOiBMYW5ndWFnZU9wdGlvbjsKICBvbkNsb3NlOiAoKSA9PiB2b2lkOwp9CgpleHBvcnQgY29uc3QgU2Vzc2lvblN1bW1hcnlNb2RhbDogUmVhY3QuRkM8U2Vzc2lvblN1bW1hcnlNb2RhbFByb3BzPiA9ICh7CiAgcmVwb3J0LAogIHNjZW5hcmlvLAogIGxhbmd1YWdlLAogIG9uQ2xvc2UsCn0pID0+IHsKICB1c2VFZmZlY3QoKCkgPT4gewogICAgLy8gRmlyZSBmZXN0aXZlIGNlbGVicmF0aW9uIGNvbmZldHRpCiAgICB0cnkgewogICAgICBjb25mZXR0aSh7CiAgICAgICAgcGFydGljbGVDb3VudDogOTAsCiAgICAgICAgc3ByZWFkOiA3MCwKICAgICAgICBvcmlnaW46IHsgeTogMC42IH0sCiAgICAgICAgY29sb3JzOiBbJyM4MThjZjgnLCAnIzM0ZDM5OScsICcjZjU5ZTBiJywgJyNlYzQ4OTknXSwKICAgICAgfSk7CiAgICB9IGNhdGNoIChlKSB7fQogIH0sIFtdKTsKCiAgY29uc3QgaGFuZGxlRG93bmxvYWRSZXBvcnQgPSAoKSA9PiB7CiAgICBjb25zdCBjb250ZW50ID0gYExpbmdvTGl2ZSBQcmFjdGljZSBSZXBvcnQgLSAke2xhbmd1YWdlLm5hbWV9ClNjZW5hcmlvOiAke3NjZW5hcmlvLnRpdGxlfQpEYXRlOiAke25ldyBEYXRlKCkudG9Mb2NhbGVEYXRlU3RyaW5nKCl9CkZsdWVuY3kgU2NvcmU6ICR7cmVwb3J0Lm92ZXJhbGxTY29yZX0vMTAwCgpLZXkgU3RyZW5ndGhzOgoke3JlcG9ydC5zdHJlbmd0aHMubWFwKChzKSA9PiBg4oCiICR7c31gKS5qb2luKCdcbicpfQoKQXJlYXMgdG8gSW1wcm92ZToKJHtyZXBvcnQuYXJlYXNUb0ltcHJvdmUubWFwKChhKSA9PiBg4oCiICR7YX1gKS5qb2luKCdcbicpfQoKR3JhbW1hciAmIFBocmFzaW5nIEhpZ2hsaWdodHM6CiR7cmVwb3J0LmdyYW1tYXJIaWdobGlnaHRzLm1hcCgoZykgPT4gYE9yaWdpbmFsOiAiJHtnLm9yaWdpbmFsfSIgLT4gQmV0dGVyOiAiJHtnLmJldHRlcn0iICgke2cucnVsZX0pYCkuam9pbignXG4nKX0KCktleSBWb2NhYnVsYXJ5Ogoke3JlcG9ydC5rZXlWb2NhYnVsYXJ5TGVhcm5lZC5tYXAoKHYpID0+IGDigKIgJHt2LnRlcm19OiAke3YubWVhbmluZ31gKS5qb2luKCdcbicpfQoKQ29hY2gncyBOb3RlOgoke3JlcG9ydC5tb3RpdmF0aW9uYWxDb21tZW50fQpgOwoKICAgIGNvbnN0IGJsb2IgPSBuZXcgQmxvYihbY29udGVudF0sIHsgdHlwZTogJ3RleHQvcGxhaW47Y2hhcnNldD11dGYtOCcgfSk7CiAgICBjb25zdCB1cmwgPSBVUkwuY3JlYXRlT2JqZWN0VVJMKGJsb2IpOwogICAgY29uc3QgYSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2EnKTsKICAgIGEuaHJlZiA9IHVybDsKICAgIGEuZG93bmxvYWQgPSBgbGluZ29saXZlLSR7bGFuZ3VhZ2UuaWR9LXNlc3Npb24udHh0YDsKICAgIGEuY2xpY2soKTsKICAgIFVSTC5yZXZva2VPYmplY3RVUkwodXJsKTsKICB9OwoKICByZXR1cm4gKAogICAgPGRpdiBjbGFzc05hbWU9ImZpeGVkIGluc2V0LTAgei01MCBiZy1ibGFjay83NSBiYWNrZHJvcC1ibHVyLW1kIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHAtNCI+CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJnbGFzcy1jYXJkLW5lb24gYmctWyMxNDA1MjhdLzk1IGJhY2tkcm9wLWJsdXItMnhsIHJvdW5kZWQtM3hsIG1heC13LTJ4bCB3LWZ1bGwgcC02IHNtOnAtOCBzaGFkb3ctWzBfMjBweF82MHB4X3JnYmEoMjM2LDcyLDE1MywwLjMpXSBib3JkZXIgYm9yZGVyLXBpbmstNTAwLzMwIHRleHQtd2hpdGUgYW5pbWF0ZS1pbiBmYWRlLWluIHpvb20taW4tOTUgbWF4LWgtWzkydmhdIG92ZXJmbG93LXktYXV0byI+CiAgICAgICAgCiAgICAgICAgey8qIEhlYWRlciAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1zdGFydCBqdXN0aWZ5LWJldHdlZW4gcGItNCBib3JkZXItYiBib3JkZXItcGluay01MDAvMjAiPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC0zIj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InctMTIgaC0xMiByb3VuZGVkLTJ4bCBiZy1ncmFkaWVudC10by10ciBmcm9tLXBpbmstNTAwIHRvLWN5YW4tNDAwIHAtWzEuNXB4XSBzaGFkb3ctWzBfMF8xNXB4X3JnYmEoMjM2LDcyLDE1MywwLjM1KV0iPgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ3LWZ1bGwgaC1mdWxsIHJvdW5kZWQtMnhsIGJnLVsjMTQwNTI4XSBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciB0ZXh0LXBpbmstMzAwIj4KICAgICAgICAgICAgICAgIDxBd2FyZCBjbGFzc05hbWU9InctNiBoLTYiIC8+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgIDxoMyBjbGFzc05hbWU9ImZvbnQtYm9sZCB0ZXh0LWxnIHRleHQtd2hpdGUiPlNlc3Npb24gUmV2aWV3ICYgRmx1ZW5jeSBSZXBvcnQ8L2gzPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXNsYXRlLTMwMCI+CiAgICAgICAgICAgICAgICB7bGFuZ3VhZ2UuZmxhZ30ge2xhbmd1YWdlLm5hbWV9IOKAoiB7c2NlbmFyaW8udGl0bGV9CiAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICBvbkNsaWNrPXtvbkNsb3NlfQogICAgICAgICAgICBjbGFzc05hbWU9InAtMS41IHJvdW5kZWQtbGcgdGV4dC1zbGF0ZS00MDAgaG92ZXI6dGV4dC13aGl0ZSBob3ZlcjpiZy13aGl0ZS8xMCB0cmFuc2l0aW9uLWNvbG9ycyBjdXJzb3ItcG9pbnRlciIKICAgICAgICAgID4KICAgICAgICAgICAgPFggY2xhc3NOYW1lPSJ3LTUgaC01IiAvPgogICAgICAgICAgPC9idXR0b24+CiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBGbHVlbmN5IFNjb3JlIENhcmQgKi99CiAgICAgICAgPGRpdiBjbGFzc05hbWU9Im10LTUgcC01IHJvdW5kZWQtMnhsIGJnLWdyYWRpZW50LXRvLXIgZnJvbS1waW5rLTUwMC8yNSB2aWEtcm9zZS01MDAvMjAgdG8tcHVycGxlLTYwMC8yNSBiYWNrZHJvcC1ibHVyLXhsIGJvcmRlciBib3JkZXItcGluay01MDAvMzAgc2hhZG93LVswXzBfMjVweF9yZ2JhKDIzNiw3MiwxNTMsMC4yNSldIHRleHQtd2hpdGUgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIj4KICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0idGV4dC14cyBmb250LXNlbWlib2xkIHVwcGVyY2FzZSB0cmFja2luZy13aWRlciB0ZXh0LXBpbmstMzAwIj5Db21tdW5pY2F0aXZlIFNjb3JlPC9zcGFuPgogICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC0zeGwgZm9udC1ibGFjayBtdC0wLjUgdGV4dC13aGl0ZSI+e3JlcG9ydC5vdmVyYWxsU2NvcmV9IC8gMTAwPC9kaXY+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC14cyB0ZXh0LXBpbmstMjAwLzkwIG10LTEgbWF4LXctc20iPgogICAgICAgICAgICAgIHtyZXBvcnQub3ZlcmFsbFNjb3JlID49IDg1CiAgICAgICAgICAgICAgICA/ICdHcmVhdCBmbHVlbmN5IGFuZCBleHByZXNzaW9uIScKICAgICAgICAgICAgICAgIDogcmVwb3J0Lm92ZXJhbGxTY29yZSA+PSA3MAogICAgICAgICAgICAgICAgPyAnR29vZCBmbG93IGFuZCBzdHJvbmcgdm9jYWJ1bGFyeS4nCiAgICAgICAgICAgICAgICA6ICdTb2xpZCBmb3VuZGF0aW9uLCBrZWVwIHRoZSBjb252ZXJzYXRpb25zIGdvaW5nISd9CiAgICAgICAgICAgIDwvcD4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InctMTYgaC0xNiByb3VuZGVkLTJ4bCBiZy13aGl0ZS8xMCBiYWNrZHJvcC1ibHVyLW1kIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIGJvcmRlciBib3JkZXItcGluay00MDAvMzAgc2hhZG93LWlubmVyIj4KICAgICAgICAgICAgPFNwYXJrbGVzIGNsYXNzTmFtZT0idy04IGgtOCB0ZXh0LXBpbmstMzAwIGFuaW1hdGUtcHVsc2UiIC8+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KCiAgICAgICAgPGRpdiBjbGFzc05hbWU9Im10LTYgc3BhY2UteS01Ij4KICAgICAgICAgIAogICAgICAgICAgey8qIFN0cmVuZ3RocyAmIEltcHJvdmVtZW50cyAqL30KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0xIHNtOmdyaWQtY29scy0yIGdhcC00Ij4KICAgICAgICAgICAgCiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJwLTQgcm91bmRlZC0yeGwgYmctZW1lcmFsZC01MDAvMTAgYm9yZGVyIGJvcmRlci1lbWVyYWxkLTUwMC8yMCI+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQteHMgZm9udC1ib2xkIHRleHQtZW1lcmFsZC0zMDAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTEuNSBtYi0yIj4KICAgICAgICAgICAgICAgIDxDaGVja0NpcmNsZTIgY2xhc3NOYW1lPSJ3LTQgaC00IHRleHQtZW1lcmFsZC00MDAiIC8+CiAgICAgICAgICAgICAgICA8c3Bhbj5LZXkgU3RyZW5ndGhzPC9zcGFuPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgIDx1bCBjbGFzc05hbWU9InNwYWNlLXktMS41IHRleHQteHMgdGV4dC1lbWVyYWxkLTIwMCI+CiAgICAgICAgICAgICAgICB7cmVwb3J0LnN0cmVuZ3Rocy5tYXAoKHN0ciwgaWR4KSA9PiAoCiAgICAgICAgICAgICAgICAgIDxsaSBrZXk9e2lkeH0gY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLXN0YXJ0IGdhcC0xLjUgbGVhZGluZy1yZWxheGVkIj4KICAgICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9InRleHQtZW1lcmFsZC00MDAgZm9udC1ib2xkIj7igKI8L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgPHNwYW4+e3N0cn08L3NwYW4+CiAgICAgICAgICAgICAgICAgIDwvbGk+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L3VsPgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJwLTQgcm91bmRlZC0yeGwgYmctYW1iZXItNTAwLzEwIGJvcmRlciBib3JkZXItYW1iZXItNTAwLzIwIj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC14cyBmb250LWJvbGQgdGV4dC1hbWJlci0zMDAgZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTEuNSBtYi0yIj4KICAgICAgICAgICAgICAgIDxUcmVuZGluZ1VwIGNsYXNzTmFtZT0idy00IGgtNCB0ZXh0LWFtYmVyLTQwMCIgLz4KICAgICAgICAgICAgICAgIDxzcGFuPkFyZWFzIHRvIFBvbGlzaDwvc3Bhbj4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8dWwgY2xhc3NOYW1lPSJzcGFjZS15LTEuNSB0ZXh0LXhzIHRleHQtYW1iZXItMjAwIj4KICAgICAgICAgICAgICAgIHtyZXBvcnQuYXJlYXNUb0ltcHJvdmUubWFwKChpbXAsIGlkeCkgPT4gKAogICAgICAgICAgICAgICAgICA8bGkga2V5PXtpZHh9IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1zdGFydCBnYXAtMS41IGxlYWRpbmctcmVsYXhlZCI+CiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWFtYmVyLTQwMCBmb250LWJvbGQiPuKAojwvc3Bhbj4KICAgICAgICAgICAgICAgICAgICA8c3Bhbj57aW1wfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPC9saT4KICAgICAgICAgICAgICAgICkpfQogICAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgIHsvKiBHcmFtbWFyICYgUGhyYXNpbmcgSGlnaGxpZ2h0cyAqL30KICAgICAgICAgIHtyZXBvcnQuZ3JhbW1hckhpZ2hsaWdodHMgJiYgcmVwb3J0LmdyYW1tYXJIaWdobGlnaHRzLmxlbmd0aCA+IDAgJiYgKAogICAgICAgICAgICA8ZGl2PgogICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJ0ZXh0LXhzIGZvbnQtYm9sZCB0ZXh0LXNsYXRlLTQwMCB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXIgbWItMiI+CiAgICAgICAgICAgICAgICBHcmFtbWFyICYgRXhwcmVzc2lvbiBQb2xpc2gKICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic3BhY2UteS0yIj4KICAgICAgICAgICAgICAgIHtyZXBvcnQuZ3JhbW1hckhpZ2hsaWdodHMubWFwKChnLCBpZHgpID0+ICgKICAgICAgICAgICAgICAgICAgPGRpdiBrZXk9e2lkeH0gY2xhc3NOYW1lPSJwLTMuNSByb3VuZGVkLXhsIGJnLXdoaXRlL1swLjAzXSBib3JkZXIgYm9yZGVyLXdoaXRlLzEwIHRleHQteHMiPgogICAgICAgICAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiB0ZXh0LXNsYXRlLTQwMCBsaW5lLXRocm91Z2giPgogICAgICAgICAgICAgICAgICAgICAgIntnLm9yaWdpbmFsfSIKICAgICAgICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIgZm9udC1zZW1pYm9sZCB0ZXh0LXBpbmstMzAwIG10LTEiPgogICAgICAgICAgICAgICAgICAgICAgPEFycm93UmlnaHQgY2xhc3NOYW1lPSJ3LTMuNSBoLTMuNSB0ZXh0LXBpbmstNDAwIHNocmluay0wIiAvPgogICAgICAgICAgICAgICAgICAgICAgIntnLmJldHRlcn0iCiAgICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQtc2xhdGUtNDAwIHRleHQtWzExcHhdIG10LTEgcGwtNSI+e2cucnVsZX08L2Rpdj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICApfQoKICAgICAgICAgIHsvKiBLZXkgVm9jYWJ1bGFyeSBMZWFybmVkICovfQogICAgICAgICAge3JlcG9ydC5rZXlWb2NhYnVsYXJ5TGVhcm5lZCAmJiByZXBvcnQua2V5Vm9jYWJ1bGFyeUxlYXJuZWQubGVuZ3RoID4gMCAmJiAoCiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9InRleHQteHMgZm9udC1ib2xkIHRleHQtc2xhdGUtNDAwIHVwcGVyY2FzZSB0cmFja2luZy13aWRlciBtYi0yIj4KICAgICAgICAgICAgICAgIFZvY2FidWxhcnkgSW50cm9kdWNlZCBpbiBTZXNzaW9uCiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTEgc206Z3JpZC1jb2xzLTIgZ2FwLTIiPgogICAgICAgICAgICAgICAge3JlcG9ydC5rZXlWb2NhYnVsYXJ5TGVhcm5lZC5tYXAoKHYsIGlkeCkgPT4gKAogICAgICAgICAgICAgICAgICA8ZGl2IGtleT17aWR4fSBjbGFzc05hbWU9InAtMi41IHJvdW5kZWQteGwgYmctd2hpdGUvWzAuMDNdIGJvcmRlciBib3JkZXItd2hpdGUvMTAgdGV4dC14cyI+CiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb250LWJvbGQgdGV4dC13aGl0ZSI+e3YudGVybX08L3NwYW4+CiAgICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXNsYXRlLTQwMCBtbC0xLjUiPuKAlCB7di5tZWFuaW5nfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICApfQoKICAgICAgICAgIHsvKiBNb3RpdmF0aW9uYWwgQ29tbWVudCAqL30KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJwLTQgcm91bmRlZC0yeGwgYmctd2hpdGUvWzAuMDNdIGJvcmRlciBib3JkZXItd2hpdGUvMTAgdGV4dC14cyB0ZXh0LXNsYXRlLTMwMCBpdGFsaWMgbGVhZGluZy1yZWxheGVkIj4KICAgICAgICAgICAgIntyZXBvcnQubW90aXZhdGlvbmFsQ29tbWVudH0iCiAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgPC9kaXY+CgogICAgICAgIHsvKiBGb290ZXIgQWN0aW9ucyAqL30KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibXQtNiBwdC00IGJvcmRlci10IGJvcmRlci1waW5rLTUwMC8yMCBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4iPgogICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICBvbkNsaWNrPXtoYW5kbGVEb3dubG9hZFJlcG9ydH0KICAgICAgICAgICAgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMS41IHB4LTQgcHktMiByb3VuZGVkLXhsIGJvcmRlciBib3JkZXItd2hpdGUvMTUgYmctd2hpdGUvNSBob3ZlcjpiZy13aGl0ZS8xMCB0ZXh0LXhzIGZvbnQtc2VtaWJvbGQgdGV4dC1zbGF0ZS0yMDAgdHJhbnNpdGlvbi1jb2xvcnMgY3Vyc29yLXBvaW50ZXIiCiAgICAgICAgICA+CiAgICAgICAgICAgIDxEb3dubG9hZCBjbGFzc05hbWU9InctNCBoLTQiIC8+CiAgICAgICAgICAgIDxzcGFuPkRvd25sb2FkIE5vdGVzPC9zcGFuPgogICAgICAgICAgPC9idXR0b24+CgogICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICBvbkNsaWNrPXtvbkNsb3NlfQogICAgICAgICAgICBjbGFzc05hbWU9InB4LTYgcHktMi41IHJvdW5kZWQteGwgYmctZ3JhZGllbnQtdG8tciBmcm9tLXBpbmstNTAwIHRvLXJvc2UtNjAwIGhvdmVyOmZyb20tcGluay02MDAgaG92ZXI6dG8tcm9zZS03MDAgdGV4dC13aGl0ZSB0ZXh0LXhzIGZvbnQtYm9sZCBzaGFkb3ctWzBfMF8yMHB4X3JnYmEoMjM2LDcyLDE1MywwLjQpXSB0cmFuc2l0aW9uLWFsbCBjdXJzb3ItcG9pbnRlciIKICAgICAgICAgID4KICAgICAgICAgICAgQ29udGludWUgUHJhY3RpY2luZwogICAgICAgICAgPC9idXR0b24+CiAgICAgICAgPC9kaXY+CgogICAgICA8L2Rpdj4KICAgIDwvZGl2PgogICk7Cn07Cg==
+import React, { useEffect } from 'react';
+import {
+  Award,
+  Sparkles,
+  CheckCircle2,
+  TrendingUp,
+  ArrowRight,
+  Download,
+  X,
+} from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { SessionReport, PracticeScenario, LanguageOption } from '../types';
+
+interface SessionSummaryModalProps {
+  report: SessionReport;
+  scenario: PracticeScenario;
+  language: LanguageOption;
+  onClose: () => void;
+}
+
+export const SessionSummaryModal: React.FC<SessionSummaryModalProps> = ({
+  report,
+  scenario,
+  language,
+  onClose,
+}) => {
+  useEffect(() => {
+    // Fire festive celebration confetti
+    try {
+      confetti({
+        particleCount: 90,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#818cf8', '#34d399', '#f59e0b', '#ec4899'],
+      });
+    } catch (e) {}
+  }, []);
+
+  const handleDownloadReport = () => {
+    const content = `LingoLive Practice Report - ${language.name}
+Scenario: ${scenario.title}
+Date: ${new Date().toLocaleDateString()}
+Fluency Score: ${report.overallScore}/100
+
+Key Strengths:
+${report.strengths.map((s) => `• ${s}`).join('\n')}
+
+Areas to Improve:
+${report.areasToImprove.map((a) => `• ${a}`).join('\n')}
+
+Grammar & Phrasing Highlights:
+${report.grammarHighlights.map((g) => `Original: "${g.original}" -> Better: "${g.better}" (${g.rule})`).join('\n')}
+
+Key Vocabulary:
+${report.keyVocabularyLearned.map((v) => `• ${v.term}: ${v.meaning}`).join('\n')}
+
+Coach's Note:
+${report.motivationalComment}
+`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lingolive-${language.id}-session.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="glass-card-neon bg-[#140528]/95 backdrop-blur-2xl rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-[0_20px_60px_rgba(236,72,153,0.3)] border border-pink-500/30 text-white animate-in fade-in zoom-in-95 max-h-[92vh] overflow-y-auto">
+        
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-pink-500/20">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500 to-cyan-400 p-[1.5px] shadow-[0_0_15px_rgba(236,72,153,0.35)]">
+              <div className="w-full h-full rounded-2xl bg-[#140528] flex items-center justify-center text-pink-300">
+                <Award className="w-6 h-6" />
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg text-white">Session Review & Fluency Report</h3>
+              <p className="text-xs text-slate-300">
+                {language.flag} {language.name} • {scenario.title}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Fluency Score Card */}
+        <div className="mt-5 p-5 rounded-2xl bg-gradient-to-r from-pink-500/25 via-rose-500/20 to-purple-600/25 backdrop-blur-xl border border-pink-500/30 shadow-[0_0_25px_rgba(236,72,153,0.25)] text-white flex items-center justify-between">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-pink-300">Communicative Score</span>
+            <div className="text-3xl font-black mt-0.5 text-white">{report.overallScore} / 100</div>
+            <p className="text-xs text-pink-200/90 mt-1 max-w-sm">
+              {report.overallScore >= 85
+                ? 'Great fluency and expression!'
+                : report.overallScore >= 70
+                ? 'Good flow and strong vocabulary.'
+                : 'Solid foundation, keep the conversations going!'}
+            </p>
+          </div>
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-pink-400/30 shadow-inner">
+            <Sparkles className="w-8 h-8 text-pink-300 animate-pulse" />
+          </div>
+        </div>
+
+        <div className="mt-6 space-y-5">
+          
+          {/* Strengths & Improvements */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+              <div className="text-xs font-bold text-emerald-300 flex items-center gap-1.5 mb-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Key Strengths</span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-emerald-200">
+                {report.strengths.map((str, idx) => (
+                  <li key={idx} className="flex items-start gap-1.5 leading-relaxed">
+                    <span className="text-emerald-400 font-bold">•</span>
+                    <span>{str}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+              <div className="text-xs font-bold text-amber-300 flex items-center gap-1.5 mb-2">
+                <TrendingUp className="w-4 h-4 text-amber-400" />
+                <span>Areas to Polish</span>
+              </div>
+              <ul className="space-y-1.5 text-xs text-amber-200">
+                {report.areasToImprove.map((imp, idx) => (
+                  <li key={idx} className="flex items-start gap-1.5 leading-relaxed">
+                    <span className="text-amber-400 font-bold">•</span>
+                    <span>{imp}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+
+          {/* Grammar & Phrasing Highlights */}
+          {report.grammarHighlights && report.grammarHighlights.length > 0 && (
+            <div>
+              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                Grammar & Expression Polish
+              </div>
+              <div className="space-y-2">
+                {report.grammarHighlights.map((g, idx) => (
+                  <div key={idx} className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs">
+                    <div className="flex items-center gap-2 text-slate-400 line-through">
+                      "{g.original}"
+                    </div>
+                    <div className="flex items-center gap-2 font-semibold text-pink-300 mt-1">
+                      <ArrowRight className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+                      "{g.better}"
+                    </div>
+                    <div className="text-slate-400 text-[11px] mt-1 pl-5">{g.rule}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Key Vocabulary Learned */}
+          {report.keyVocabularyLearned && report.keyVocabularyLearned.length > 0 && (
+            <div>
+              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                Vocabulary Introduced in Session
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {report.keyVocabularyLearned.map((v, idx) => (
+                  <div key={idx} className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs">
+                    <span className="font-bold text-white">{v.term}</span>
+                    <span className="text-slate-400 ml-1.5">— {v.meaning}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Motivational Comment */}
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 text-xs text-slate-300 italic leading-relaxed">
+            "{report.motivationalComment}"
+          </div>
+
+        </div>
+
+        {/* Footer Actions */}
+        <div className="mt-6 pt-4 border-t border-pink-500/20 flex items-center justify-between">
+          <button
+            onClick={handleDownloadReport}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download Notes</span>
+          </button>
+
+          <button
+            onClick={onClose}
+            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white text-xs font-bold shadow-[0_0_20px_rgba(236,72,153,0.4)] transition-all cursor-pointer"
+          >
+            Continue Practicing
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+};
