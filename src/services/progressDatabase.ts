@@ -290,8 +290,8 @@ export function loadLocalProfile(): UserProfile | null {
     const raw = localStorage.getItem('lingolive_user_profile');
     if (raw) {
       const parsed = JSON.parse(raw) as UserProfile;
-      if (parsed && parsed.name && parsed.name !== 'Polyglot Learner') {
-        const xp = parsed.xp === 835 || parsed.xp === 680 ? 0 : (parsed.xp || 0);
+      if (parsed && typeof parsed === 'object') {
+        const xp = typeof parsed.xp === 'number' ? parsed.xp : 0;
         return {
           ...parsed,
           xp,
