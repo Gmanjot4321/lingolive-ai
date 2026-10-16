@@ -130,14 +130,19 @@ export const calculateStreak = (
 };
 
 export const computeLeague = (xp: number): 'Bronze' | 'Silver' | 'Gold' | 'Diamond' => {
-  if (xp >= 3000) return 'Diamond';
-  if (xp >= 1500) return 'Gold';
-  if (xp >= 600) return 'Silver';
+  // Realistic CEFR Progression: Reaching Diamond tier requires at least ~1 month (30-40 days) of continuous daily practice (2,000+ XP)
+  if (xp >= 2000) return 'Diamond';
+  if (xp >= 1000) return 'Gold';
+  if (xp >= 400) return 'Silver';
   return 'Bronze';
 };
 
 export const createCleanDefaultProfile = (existing?: Partial<UserProfile> | null): UserProfile => {
-  const xp = typeof existing?.xp === 'number' && existing.xp !== 835 && existing.xp !== 680 && existing.xp !== 50 ? existing.xp : 0;
+  let xp = typeof existing?.xp === 'number' && existing.xp !== 835 && existing.xp !== 680 && existing.xp !== 50 ? existing.xp : 0;
+  // Recalibrate if profile had the legacy inflated 1950 XP vocab sprint bug
+  if (xp >= 1500 && (!existing?.activeDates || existing.activeDates.length <= 3)) {
+    xp = 25;
+  }
   return {
     id: existing?.id || `user-${Date.now()}`,
     name: existing?.name || 'Polyglot Learner',
@@ -176,23 +181,41 @@ export const createCleanDefaultProfile = (existing?: Partial<UserProfile> | null
 
 /**
  * Initialize or migrate a user profile to guarantee starting from 0 XP and accurate streak.
- * Purges legacy seeds (835 XP, 680 XP, 4 days streak, etc.).
+ * Purges legacy seeds (835 XP, 680 XP, 4 days streak, 1950 XP vocab sprint inflation, etc.).
  */
 export const migrateOrInitializeProfile = (existing: UserProfile | null): UserProfile => {
   const PURGE_KEY = 'lingolive_streak_zero_reset_v13';
   const XP_ZERO_START_KEY = 'lingolive_xp_start_zero_v5';
+  const XP_REALISTIC_TIER_KEY = 'lingolive_xp_realistic_v3';
 
   // If there's no existing profile, initialize fresh with 0 XP and 0 streak
   if (!existing) {
     try {
       localStorage.setItem(PURGE_KEY, 'true');
       localStorage.setItem(XP_ZERO_START_KEY, 'true');
+      localStorage.setItem(XP_REALISTIC_TIER_KEY, 'true');
     } catch {}
     const fresh = createCleanDefaultProfile();
     try {
       localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(fresh));
     } catch {}
     return fresh;
+  }
+
+  // Detect if existing profile suffered from the inflated vocab challenge bug (1950 XP with <4 days of activity)
+  if (!localStorage.getItem(XP_REALISTIC_TIER_KEY)) {
+    try {
+      localStorage.setItem(XP_REALISTIC_TIER_KEY, 'true');
+    } catch {}
+    if (existing.xp >= 1500 && (!existing.activeDates || existing.activeDates.length <= 3)) {
+      const realisticXP = Math.min(60, Math.max(15, (existing.activeDates?.length || 1) * 20));
+      existing.xp = realisticXP;
+      existing.league = computeLeague(realisticXP);
+      try {
+        localStorage.setItem(STORAGE_USER_PROFILE, JSON.stringify(existing));
+      } catch {}
+      return existing;
+    }
   }
 
   // Detect if existing profile needs clean zero-XP baseline migration
