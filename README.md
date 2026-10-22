@@ -1,1 +1,190 @@
-IyBMaW5nb0xpdmUgQUkg4oCUIFJlYWwtVGltZSBBSSBMYW5ndWFnZSBMZWFybmluZyBQYXJ0bmVyCgpbIVtMaXZlIERlbW9dKGh0dHBzOi8vaW1nLnNoaWVsZHMuaW8vYmFkZ2UvTGl2ZV9EZW1vLWxpbmdvbGl2ZS0tYWkub25yZW5kZXIuY29tLXN1Y2Nlc3M/c3R5bGU9Zm9yLXRoZS1iYWRnZSZsb2dvPXJlbmRlcildKGh0dHBzOi8vbGluZ29saXZlLWFpLm9ucmVuZGVyLmNvbSkKCj4g8J+UlyAqKkxpdmUgRGVtbzoqKiBbaHR0cHM6Ly9saW5nb2xpdmUtYWkub25yZW5kZXIuY29tXShodHRwczovL2xpbmdvbGl2ZS1haS5vbnJlbmRlci5jb20pCgoqKkxpbmdvTGl2ZSBBSSoqIGlzIGEgZnVsbC1zdGFjaywgQUktcG93ZXJlZCBsYW5ndWFnZSBsZWFybmluZyBwbGF0Zm9ybSB0aGF0IHBhaXJzIGxlYXJuZXJzIHdpdGggYSBsaXZlIGNvbnZlcnNhdGlvbmFsIEFJIHBhcnRuZXIgYWNyb3NzIG5pbmUgbGFuZ3VhZ2VzLiBJdCBjb21iaW5lcyByZWFsLXRpbWUgdm9pY2UgY29udmVyc2F0aW9uLCBzdHJ1Y3R1cmVkIENFRlItYmFzZWQgcHJvZ3Jlc3Npb24gKEEwIHRocm91Z2ggQzEpLCBhbmQgYSBmdWxsIHN1aXRlIG9mIHByYWN0aWNlIG1vZGVzIChzcGVha2luZywgbGlzdGVuaW5nLCByZWFkaW5nLCB3cml0aW5nLCBhbmQgcHJvbnVuY2lhdGlvbikgaW50byBvbmUgbGVhcm5pbmcgZXhwZXJpZW5jZS4KClJhdGhlciB0aGFuIHN0YXRpYyBsZXNzb25zLCBMaW5nb0xpdmUgQUkgZ2VuZXJhdGVzIHNjZW5hcmlvcywgZXhhbXMsIHN0b3JpZXMsIGFuZCBmZWVkYmFjayBvbiB0aGUgZmx5IHVzaW5nIEdvb2dsZSdzIEdlbWluaSBtb2RlbHMsIHRoZW4gdHJhY2tzIGVhY2ggbGVhcm5lcidzIHByb2dyZXNzLCBzdHJlYWtzLCBhbmQgdm9jYWJ1bGFyeSBpbiBhIHBlcnNpc3RlbnQgU3VwYWJhc2UtYmFja2VkIHByb2ZpbGUuCgotLS0KCiMjIEtleSBIaWdobGlnaHRzICYgQXJjaGl0ZWN0dXJlCgoqICoqTGl2ZSBWb2ljZSBDb252ZXJzYXRpb24gUGFydG5lcjoqKiBBIFdlYlNvY2tldC1kcml2ZW4gKGAvd3MvbGl2ZWApIHJlYWwtdGltZSB2b2ljZSBzZXNzaW9uIHBvd2VyZWQgYnkgR2VtaW5pJ3MgbGl2ZSBhdWRpbyBtb2RlbCwgbGV0dGluZyBsZWFybmVycyBob2xkIGEgc3Bva2VuIGNvbnZlcnNhdGlvbiB3aXRoIGFuIEFJIHBhcnRuZXIgaW5zdGVhZCBvZiB0eXBpbmcuCiogKipDRUZSLUFsaWduZWQgUHJvZ3Jlc3Npb24gU3lzdGVtOioqIExlYXJuZXJzIG1vdmUgdGhyb3VnaCBzaXggcHJvZmljaWVuY3kgbGV2ZWxzIChBMCB0byBDMSksIHVubG9ja2luZyBuZXcgbGV2ZWxzIHRocm91Z2ggcHJvbW90aW9uIGV4YW1zIGFuZCByZXF1aXJlZCBwcmFjdGljZSBjb3VudHMgdHJhY2tlZCBwZXIgbGV2ZWwuCiogKipGaXZlIFN0cnVjdHVyZWQgUHJhY3RpY2UgTW9kZXM6KiogRGVkaWNhdGVkIHN0dWRpb3MgZm9yIFNwZWFraW5nLCBMaXN0ZW5pbmcsIFJlYWRpbmcsIFdyaXRpbmcsIGFuZCBQaG9uZXRpY3MsIGVhY2ggd2l0aCBpdHMgb3duIEdlbWluaS1nZW5lcmF0ZWQgY29udGVudCBlbmRwb2ludC4KKiAqKkFJLUdlbmVyYXRlZCBDb250ZW50OioqIFByYWN0aWNlIHNjZW5hcmlvcywgbW9jayBleGFtcywgcmVhZGluZyBwYXNzYWdlcywgbGlzdGVuaW5nIHByb21wdHMsIHN0b3JpZXMsIHByb251bmNpYXRpb24gZmVlZGJhY2ssIGFuZCB3b3JkIGxvb2t1cHMgYXJlIGFsbCBnZW5lcmF0ZWQgZHluYW1pY2FsbHkgcGVyIHJlcXVlc3QgcmF0aGVyIHRoYW4gaGFyZC1jb2RlZC4KKiAqKk11bHRpLU1vZGVsIEZhbGxiYWNrOioqIEEgY3VzdG9tIHJldHJ5LWFuZC1mYWxsYmFjayB3cmFwcGVyIGN5Y2xlcyB0aHJvdWdoIG11bHRpcGxlIEdlbWluaSB0ZXh0IG1vZGVscyBvbiByYXRlIGxpbWl0cyBvciBoaWdoLWRlbWFuZCBlcnJvcnMsIHNvIGdlbmVyYXRpb24gc3RheXMgcmVsaWFibGUgdW5kZXIgbG9hZC4KKiAqKlN0cmVha3MgJiBHYW1pZmljYXRpb246KiogQSBzdHJlYWsgbWFuYWdlciB3aXRoIGRhaWx5IGNoZWNrLWlucywgc3RyZWFrIGZyZWV6ZXMsIG1pbGVzdG9uZSByZXdhcmRzLCBhbmQgY2VsZWJyYXRpb24gbW9kYWxzIHRvIGtlZXAgbGVhcm5lcnMgY29taW5nIGJhY2suCiogKipQZXJzaXN0ZW50IExlYXJuZXIgUHJvZmlsZXM6KiogU3VwYWJhc2UgKFBvc3RncmVTUUwpIHN0b3JlcyB1c2VyIHByb2ZpbGVzLCBzYXZlZCB2b2NhYnVsYXJ5LCBhbmQgZXhhbSBoaXN0b3J5LCB3aXRoIGVtYWlsL09UUC1iYXNlZCBhdXRoZW50aWNhdGlvbiBoYW5kbGVkIHNlcnZlci1zaWRlLgoqICoqVGV4dC10by1TcGVlY2ggJiBUcmFuc2NyaXB0aW9uOioqIEEgc2VydmVyLXNpZGUgVFRTIGVuZHBvaW50IGZvciBBSSByZXNwb25zZSBwbGF5YmFjayAoYFBPU1QgL2FwaS90dHNgKTsgdm9pY2UgaW5wdXQgaW4gdGhlIHByYWN0aWNlIG1vZGVzIGdvZXMgdGhyb3VnaCB0aGUgYnJvd3NlciBXZWIgU3BlZWNoIEFQSSwgd2l0aCBhIHNlcnZlci1zaWRlIGAvYXBpL3RyYW5zY3JpYmVgIGVuZHBvaW50IGF2YWlsYWJsZS4KCi0tLQoKIyMgVGVjaCBTdGFjayAmIFRlY2hub2xvZ2llcyBVc2VkCgojIyMgRnJvbnRlbmQKKiAqKkNvcmUgRnJhbWV3b3JrOioqIFJlYWN0IDE5LCBUeXBlU2NyaXB0CiogKipCdWlsZCBUb29saW5nOioqIFZpdGUsIEJ1bgoqICoqU3R5bGluZyAmIEFuaW1hdGlvbjoqKiBUYWlsd2luZCBDU1MgKHY0KSwgRnJhbWVyIE1vdGlvbiAoYG1vdGlvbmApCiogKipVSSAmIEZlZWRiYWNrOioqIEx1Y2lkZSBSZWFjdCBpY29ucywgUmVjaGFydHMgKHByb2dyZXNzIGRhc2hib2FyZHMpLCBDYW52YXMgQ29uZmV0dGkgKGNlbGVicmF0aW9ucykKCiMjIyBCYWNrZW5kICYgQUkgT3JjaGVzdHJhdGlvbgoqICoqU2VydmVyOioqIEV4cHJlc3MgKFR5cGVTY3JpcHQsIHJ1biB2aWEgYHRzeGApLCBidW5kbGVkIHdpdGggZXNidWlsZCBmb3IgcHJvZHVjdGlvbgoqICoqUmVhbC1UaW1lIExheWVyOioqIGB3c2AgKFdlYlNvY2tldCBTZXJ2ZXIpIGZvciB0aGUgbGl2ZSB2b2ljZSBwYXJ0bmVyIHNlc3Npb24KKiAqKkFJIFByb3ZpZGVyOioqIEdvb2dsZSBHZW1pbmkgKGBAZ29vZ2xlL2dlbmFpYCkg4oCUIHRleHQgZ2VuZXJhdGlvbiwgbGl2ZSBhdWRpbywgVFRTLCBhbmQgdHJhbnNjcmlwdGlvbiBhY3Jvc3MgbXVsdGlwbGUgZmFsbGJhY2sgbW9kZWxzCiogKipBdXRoICYgRW1haWw6KiogTm9kZW1haWxlciB3aXRoIEJyZXZvIChTZW5kaW5ibHVlKSBTTVRQIGZvciBPVFAtYmFzZWQgc2lnbnVwIGFuZCB2ZXJpZmljYXRpb24KKiAqKkRhdGFiYXNlICYgQXV0aDoqKiBTdXBhYmFzZSAoUG9zdGdyZVNRTCkKKiAqKkRlcGxveW1lbnQ6KiogUmVuZGVyCgotLS0KCiMjIENvbXByZWhlbnNpdmUgU3lzdGVtIEFyY2hpdGVjdHVyZQoKYGBgdGV4dApsaW5nb2xpdmUtYWkvCuKUggrilJzilIDilIAgc2VydmVyLnRzICAgICAgICAgICAgICAgICAgICAgICAjIEV4cHJlc3MgKyBXZWJTb2NrZXQgc2VydmVyLCBhbGwgR2VtaW5pIEFQSSBvcmNoZXN0cmF0aW9uCuKUnOKUgOKUgCBzdXBhYmFzZV9zY2hlbWEuc3FsICAgICAgICAgICAgICMgUG9zdGdyZXMgc2NoZW1hOiB1c2VyX3Byb2ZpbGVzLCBzYXZlZF92b2NhYnVsYXJ5LCBleGFtX2hpc3RvcnkK4pSc4pSA4pSAIHZpdGUuY29uZmlnLnRzICAgICAgICAgICAgICAgICAgIyBWaXRlIGJ1aWxkIGNvbmZpZ3VyYXRpb24K4pSCCuKUlOKUgOKUgCBzcmMvCiAgICDilJzilIDilIAgQXBwLnRzeCAgICAgICAgICAgICAgICAgICAgICMgTWFpbiBhcHAgc2hlbGwsIHZpZXcgcm91dGluZywgYW5kIGdsb2JhbCBsZWFybmVyIHN0YXRlCiAgICDilJzilIDilIAgbWFpbi50c3ggICAgICAgICAgICAgICAgICAgICMgUmVhY3QgY2xpZW50IGVudHJ5cG9pbnQKICAgIOKUnOKUgOKUgCB0eXBlcy50cyAgICAgICAgICAgICAgICAgICAgIyBHbG9iYWwgVHlwZVNjcmlwdCBpbnRlcmZhY2VzCiAgICDilJzilIDilIAgaW5kZXguY3NzICAgICAgICAgICAgICAgICAgICMgR2xvYmFsIHN0eWxlcyBhbmQgVGFpbHdpbmQgZGlyZWN0aXZlcwogICAg4pSCCiAgICDilJzilIDilIAgY29tcG9uZW50cy8gICAgICAgICAgICAgICAgICMgW1VJIFRpZXJdCiAgICDilIIgICDilJzilIDilIAgSGVhZGVyLnRzeCAgICAgICAgICAgICAgICMgTmF2aWdhdGlvbiBhbmQgbGFuZ3VhZ2UvbGV2ZWwgc3dpdGNoZXIKICAgIOKUgiAgIOKUnOKUgOKUgCBMaXZlVm9pY2VQYXJ0bmVyLnRzeCAgICAgIyBSZWFsLXRpbWUgV2ViU29ja2V0IHZvaWNlIGNvbnZlcnNhdGlvbiBVSQogICAg4pSCICAg4pSc4pSA4pSAIEludGVyYWN0aXZlQ2hhdC50c3ggICAgICAjIFRleHQtYmFzZWQgY29udmVyc2F0aW9uYWwgcHJhY3RpY2UKICAgIOKUgiAgIOKUnOKUgOKUgCBBSVZvaWNlU3BoZXJlLnRzeCAgICAgICAgIyBBbmltYXRlZCB2b2ljZS1hY3Rpdml0eSB2aXN1YWxpemVyCiAgICDilIIgICDilJzilIDilIAgQXV0aE1vZGFsLnRzeCAgICAgICAgICAgICMgT1RQLWJhc2VkIHNpZ24gdXAgLyBzaWduIGluIGZsb3cKICAgIOKUgiAgIOKUnOKUgOKUgCBTY2VuYXJpb1NlbGVjdG9yTW9kYWwudHN4IyBTY2VuYXJpbyBwaWNrZXIgZm9yIGd1aWRlZCBwcmFjdGljZQogICAg4pSCICAg4pSc4pSA4pSAIFByb251bmNpYXRpb25Db2FjaE1vZGFsLnRzeCAjIEFJIHByb251bmNpYXRpb24gc2NvcmluZyBhbmQgZmVlZGJhY2sKICAgIOKUgiAgIOKUnOKUgOKUgCBXb3JkTG9va3VwTW9kYWwudHN4ICAgICAgIyBPbi1kZW1hbmQgQUkgZGljdGlvbmFyeS93b3JkIGxvb2t1cAogICAg4pSCICAg4pSc4pSA4pSAIFZvY2FidWxhcnlEZWNrTW9kYWwudHN4ICAjIFNhdmVkIHZvY2FidWxhcnkgcmV2aWV3IGRlY2sKICAgIOKUgiAgIOKUnOKUgOKUgCBTZXNzaW9uU3VtbWFyeU1vZGFsLnRzeCAgIyBFbmQtb2Ytc2Vzc2lvbiBBSSBwZXJmb3JtYW5jZSByZWNhcAogICAg4pSCICAg4pSc4pSA4pSAIE1vY2tUZXN0RXhhbVZpZXcudHN4ICAgICAjIEZ1bGwgQUktZ2VuZXJhdGVkIG1vY2sgZXhhbXMKICAgIOKUgiAgIOKUnOKUgOKUgCBQcm9tb3Rpb25FeGFtTW9kYWwudHN4ICAgIyBMZXZlbC11cCBnYXRpbmcgZXhhbQogICAg4pSCICAg4pSc4pSA4pSAIFBlcmZvcm1hbmNlRGFzaGJvYXJkVmlldy50c3ggIyBSZWNoYXJ0cy1iYXNlZCBwcm9ncmVzcyBhbmFseXRpY3MKICAgIOKUgiAgIOKUnOKUgOKUgCBMZWFybmluZ0h1YlZpZXcudHN4ICAgICAgIyBDZW50cmFsIG5hdmlnYXRpb24gaHViIGZvciBwcmFjdGljZSBtb2RlcwogICAg4pSCICAg4pSc4pSA4pSAIFN0cmVha01vZGFsLnRzeCAvIFN0cmVha0NlbGVicmF0aW9uTW9kYWwudHN4ICMgR2FtaWZpZWQgc3RyZWFrIHRyYWNraW5nCiAgICDilIIgICDilJzilIDilIAgQmVnaW5uZXJGb3VuZGF0aW9uc01vZGFsLnRzeCAjIEEwIG9uYm9hcmRpbmcgY29udGVudAogICAg4pSCICAg4pSc4pSA4pSAIEdsYXNzQmFja2dyb3VuZC50c3ggICAgICAjIEFtYmllbnQgVUkgYmFja2dyb3VuZAogICAg4pSCICAg4pSCCiAgICDilIIgICDilJTilIDilIAgcHJhY3RpY2UvICAgICAgICAgICAgICAgICMgW0RlZGljYXRlZCBQcmFjdGljZSBTdHVkaW9zXQogICAg4pSCICAgICAgIOKUnOKUgOKUgCBTcGVha2luZ1ByYWN0aWNlVmlldy50c3gKICAgIOKUgiAgICAgICDilJzilIDilIAgTGlzdGVuaW5nUHJhY3RpY2VWaWV3LnRzeAogICAg4pSCICAgICAgIOKUnOKUgOKUgCBSZWFkaW5nUHJhY3RpY2VWaWV3LnRzeAogICAg4pSCICAgICAgIOKUnOKUgOKUgCBXcml0aW5nUHJhY3RpY2VWaWV3LnRzeAogICAg4pSCICAgICAgIOKUnOKUgOKUgCBQaG9uZXRpY3NTdHVkaW9WaWV3LnRzeAogICAg4pSCICAgICAgIOKUlOKUgOKUgCBTdG9yeVJlYWRlck1vZGFsLnRzeAogICAg4pSCCiAgICDilJzilIDilIAgZGF0YS8gICAgICAgICAgICAgICAgICAgICAgICMgW1N0YXRpYyBSZWZlcmVuY2UgRGF0YV0KICAgIOKUgiAgIOKUnOKUgOKUgCBsYW5ndWFnZXMudHMgICAgICAgICAgICAgIyA5IHN1cHBvcnRlZCBsYW5ndWFnZXMsIEFJIHBhcnRuZXIgcGVyc29uYXMsIHNjZW5hcmlvcwogICAg4pSCICAg4pSc4pSA4pSAIGxldmVsUHJvZ3Jlc3Npb24udHMgICAgICAjIENFRlIgbGV2ZWwgb3JkZXIsIHVubG9jayBydWxlcywgcmVxdWlyZWQgcHJhY3RpY2UgY291bnRzCiAgICDilIIgICDilJzilIDilIAgbGV2ZWxHcmVldGluZ3MudHMgICAgICAgICMgUGVyLWxldmVsIG9uYm9hcmRpbmcgZ3JlZXRpbmdzCiAgICDilIIgICDilJzilIDilIAgY2VmclN0b3JpZXMudHMgICAgICAgICAgICMgU2VlZCBzdG9yeSBjb250ZW50IGJ5IGxldmVsCiAgICDilIIgICDilJzilIDilIAgbW9ja0V4YW1zLnRzICAgICAgICAgICAgICMgTW9jayBleGFtIHNjYWZmb2xkaW5nCiAgICDilIIgICDilJTilIDilIAgZGljdGlvbmFyeS50cyAgICAgICAgICAgICMgTG9jYWwgZGljdGlvbmFyeSBmYWxsYmFjayBkYXRhCiAgICDilIIKICAgIOKUnOKUgOKUgCBzZXJ2aWNlcy8gICAgICAgICAgICAgICAgICAgICMgW0NsaWVudC1TaWRlIERhdGEgTGF5ZXJdCiAgICDilIIgICDilJTilIDilIAgcHJvZ3Jlc3NEYXRhYmFzZS50cyAgICAgICMgU3VwYWJhc2UgcmVhZC93cml0ZSBmb3IgcHJvZmlsZXMsIGV4YW1zLCB2b2NhYnVsYXJ5CiAgICDilIIKICAgIOKUnOKUgOKUgCBsaWIvCiAgICDilIIgICDilJTilIDilIAgc3VwYWJhc2UudHMgICAgICAgICAgICAgICMgU3VwYWJhc2UgY2xpZW50IGluaXRpYWxpemF0aW9uCiAgICDilIIKICAgIOKUlOKUgOKUgCB1dGlscy8gICAgICAgICAgICAgICAgICAgICAgICMgW0NvcmUgVXRpbGl0aWVzXQogICAgICAgIOKUnOKUgOKUgCBzdHJlYWtNYW5hZ2VyLnRzICAgICAgICAgIyBTdHJlYWssIG1pbGVzdG9uZSwgYW5kIGNoZWNrLWluIGxvZ2ljCiAgICAgICAg4pSU4pSA4pSAIGF1ZGlvLnRzICAgICAgICAgICAgICAgICAjIEF1ZGlvIHBsYXliYWNrL3JlY29yZGluZyBoZWxwZXJzCmBgYAoKLS0tCgojIyAgQVBJIFN1cmZhY2UgKEV4cHJlc3MgU2VydmVyKQoKQWxsIEFJIGdlbmVyYXRpb24gYW5kIGFjY291bnQgbG9naWMgcnVucyBzZXJ2ZXItc2lkZSBzbyB0aGUgR2VtaW5pIEFQSSBrZXkgaXMgbmV2ZXIgZXhwb3NlZCB0byB0aGUgY2xpZW50LgoKfCBFbmRwb2ludCB8IFB1cnBvc2UgfAp8LS0tfC0tLXwKfCBgUE9TVCAvYXBpL2NoYXRgIHwgQ29yZSBjb252ZXJzYXRpb25hbCBsYW5ndWFnZSBjb2FjaGluZyB8CnwgYFBPU1QgL2FwaS90dHNgIHwgVGV4dC10by1zcGVlY2ggcGxheWJhY2sgb2YgQUkgcmVzcG9uc2VzIHwKfCBgUE9TVCAvYXBpL3RyYW5zY3JpYmVgIHwgU3BlZWNoLXRvLXRleHQgdHJhbnNjcmlwdGlvbiBvZiBsZWFybmVyIGF1ZGlvIHwKfCBgUE9TVCAvYXBpL2dlbmVyYXRlLXNjZW5hcmlvYCB8IEFJLWdlbmVyYXRlZCBwcmFjdGljZSBzY2VuYXJpb3MgfAp8IGBQT1NUIC9hcGkvcHJvbnVuY2lhdGlvbi1mZWVkYmFja2AgfCBQcm9udW5jaWF0aW9uIHNjb3JpbmcgYW5kIGNvcnJlY3Rpb24gfAp8IGBQT1NUIC9hcGkvd29yZC1sb29rdXBgIHwgT24tZGVtYW5kIEFJIGRpY3Rpb25hcnkgbG9va3VwcyB8CnwgYFBPU1QgL2FwaS9zZXNzaW9uLXN1bW1hcnlgIHwgRW5kLW9mLXNlc3Npb24gcGVyZm9ybWFuY2UgcmVjYXAgfAp8IGBQT1NUIC9hcGkvZ2VuZXJhdGUtbW9jay10ZXN0YCAvIGBldmFsdWF0ZS1tb2NrLXRlc3RgIHwgRnVsbCBtb2NrIGV4YW0gZ2VuZXJhdGlvbiBhbmQgZ3JhZGluZyB8CnwgYFBPU1QgL2FwaS9ldmFsdWF0ZS13cml0aW5nYCB8IEFJLWdyYWRlZCB3cml0aW5nIGZlZWRiYWNrIHwKfCBgUE9TVCAvYXBpL2dlbmVyYXRlLXN0b3J5YCB8IExldmVsLWFwcHJvcHJpYXRlIEFJLWdlbmVyYXRlZCBzdG9yaWVzIHwKfCBgUE9TVCAvYXBpL2dlbmVyYXRlLXBob25ldGljcy1kcmlsbGAgfCBQaG9uZXRpY3MgcHJhY3RpY2UgZHJpbGxzIHwKfCBgUE9TVCAvYXBpL2dlbmVyYXRlLXJlYWRpbmctcGFzc2FnZWAgLyBgL2FwaS9nZW5lcmF0ZS1saXN0ZW5pbmctc2NlbmFyaW9gIC8gYC9hcGkvZ2VuZXJhdGUtc3BlYWtpbmctcHJvbXB0YCAvIGAvYXBpL2dlbmVyYXRlLXdyaXRpbmctcHJvbXB0YCB8IFBlci1za2lsbCBwcmFjdGljZSBjb250ZW50IGdlbmVyYXRpb24gfAp8IGBQT1NUIC9hcGkvYXV0aC9zZW5kLW90cGAgLyBgL2FwaS9hdXRoL3ZlcmlmeS1vdHAtYW5kLXNpZ251cGAgLyBgL2FwaS9hdXRoL3NpZ251cGAgLyBgL2FwaS9hdXRoL3NpZ25pbmAgfCBFbWFpbCBPVFAgYXV0aGVudGljYXRpb24gZmxvdyB8CnwgYEdFVC9QT1NUIC9hcGkvcHJvZmlsZWAgfCBMZWFybmVyIHByb2ZpbGUgcmVhZC93cml0ZSB8CnwgYFdTIC93cy9saXZlYCB8IFJlYWwtdGltZSBsaXZlIHZvaWNlIGNvbnZlcnNhdGlvbiBzZXNzaW9uIHwKCi0tLQoKIyMgU3VwcG9ydGVkIExhbmd1YWdlcwoKU3BhbmlzaCDCtyBGcmVuY2ggwrcgSmFwYW5lc2UgwrcgR2VybWFuIMK3IEl0YWxpYW4gwrcgTWFuZGFyaW4gQ2hpbmVzZSDCtyBQb3J0dWd1ZXNlIMK3IEtvcmVhbiDCtyBFbmdsaXNoCgpFYWNoIGxhbmd1YWdlIHNoaXBzIHdpdGggYSBkZWRpY2F0ZWQgQUkgcGFydG5lciBwZXJzb25hLCBuYXRpdmUgc2FtcGxlIHBocmFzZXMsIGFuZCBzcGVlY2gtbG9jYWxlIGNvbmZpZ3VyYXRpb24gZm9yIHRleHQtdG8tc3BlZWNoIGFuZCB0cmFuc2NyaXB0aW9uLgoKLS0tCgoKIyMgIEdldHRpbmcgU3RhcnRlZAoKIyMjIFByZXJlcXVpc2l0ZXMKCiogTm9kZS5qcyAxOCsgKG9yIFtCdW5dKGh0dHBzOi8vYnVuLnNoKSkKKiBBIEdvb2dsZSBHZW1pbmkgQVBJIGtleSDigJQgZ2V0IG9uZSBmcmVlIGF0IFtHb29nbGUgQUkgU3R1ZGlvXShodHRwczovL2Fpc3R1ZGlvLmdvb2dsZS5jb20vYXBpa2V5KQoqIChPcHRpb25hbCkgQSBTdXBhYmFzZSBwcm9qZWN0IGZvciBwZXJzaXN0ZW50IHByb2ZpbGVzLCBzYXZlZCB2b2NhYnVsYXJ5LCBhbmQgZXhhbSBoaXN0b3J5CiogKE9wdGlvbmFsKSBBIEJyZXZvIGFjY291bnQgZm9yIE9UUCBzaWdudXAgZW1haWxzCgojIyMgMS4gSW5zdGFsbCBkZXBlbmRlbmNpZXMKCmBgYGJhc2gKbnBtIGluc3RhbGwgICAgICAgICMgb3I6IGJ1biBpbnN0YWxsCmBgYAoKIyMjIDIuIENvbmZpZ3VyZSBlbnZpcm9ubWVudCB2YXJpYWJsZXMKCkNvcHkgdGhlIGV4YW1wbGUgZmlsZSBhbmQgZmlsbCBpbiB5b3VyIGtleXM6CgpgYGBiYXNoCmNwIC5lbnYuZXhhbXBsZSAuZW52CmBgYAoKfCBWYXJpYWJsZSB8IFJlcXVpcmVkIHwgUHVycG9zZSB8CnwtLS18LS0tfC0tLXwKfCBgR0VNSU5JX0FQSV9LRVlgIHwg4pyFIFllcyB8IFBvd2VycyBhbGwgQUkgZ2VuZXJhdGlvbiwgbGl2ZSB2b2ljZSwgVFRTLCBhbmQgdHJhbnNjcmlwdGlvbiB8CnwgYFNVUEFCQVNFX1VSTGAgLyBgVklURV9TVVBBQkFTRV9VUkxgIHwgTm8gfCBFbmFibGVzIHBlcnNpc3RlbnQgcHJvZmlsZXMsIHNhdmVkIHZvY2FidWxhcnksIGV4YW0gaGlzdG9yeSB8CnwgYFNVUEFCQVNFX1NFUlZJQ0VfUk9MRV9LRVlgIChvciBgU1VQQUJBU0VfQU5PTl9LRVlgKSB8IE5vIHwgU2VydmVyLXNpZGUgU3VwYWJhc2UgYWNjZXNzIHwKfCBgVklURV9TVVBBQkFTRV9VUkxgIC8gYFZJVEVfU1VQQUJBU0VfQU5PTl9LRVlgIHwgTm8gfCBDbGllbnQtc2lkZSBTdXBhYmFzZSBhY2Nlc3MgfAp8IGBCUkVWT19BUElfS0VZYCAob3IgYEJSRVZPX0tFWWAgLyBgU0VORElOQkxVRV9BUElfS0VZYCkgfCBObyB8IFNlbmRzIE9UUCBzaWdudXAgZW1haWxzIChmYWxscyBiYWNrIHRvIEJyZXZvIFNNVFAgcmVsYXkpIHwKfCBgQlJFVk9fU0VOREVSX0VNQUlMYCwgYEJSRVZPX1NFTkRFUl9OQU1FYCB8IE5vIHwgU2VuZGVyIGlkZW50aXR5IGZvciBPVFAgZW1haWxzIHwKCldpdGhvdXQgU3VwYWJhc2Ugb3IgQnJldm8gY29uZmlndXJlZCwgdGhlIGFwcCBzdGlsbCBydW5zIGluIGd1ZXN0IG1vZGUgd2l0aCBhIGxvY2FsIEpTT04gcHJvZmlsZSBzdG9yZSDigJQgdGhvc2UgZmVhdHVyZXMgZGVncmFkZSBncmFjZWZ1bGx5LgoKIyMjIDMuIFJ1biBpdAoKYGBgYmFzaApucG0gcnVuIGRldiAgICAgIyBkZXYgc2VydmVyIGF0IGh0dHA6Ly9sb2NhbGhvc3Q6MzAwMCAodHN4ICsgVml0ZSkKbnBtIHJ1biBidWlsZCAgICMgcHJvZHVjdGlvbiBidW5kbGUgLT4gZGlzdC8KbnBtIHN0YXJ0ICAgICAgICMgc2VydmUgdGhlIHByb2R1Y3Rpb24gYnVpbGQgKG5vZGUgZGlzdC9zZXJ2ZXIuY2pzKQpgYGAKCkEgc2luZ2xlIEV4cHJlc3MgcHJvY2VzcyBzZXJ2ZXMgdGhlIFZpdGUgZnJvbnRlbmQsIHRoZSBBUEksIGFuZCB0aGUgV2ViU29ja2V0IGJhY2tlbmQgb24gcG9ydCBgMzAwMGAuCgotLS0KCiMjIPCfk6YgRGVwbG95bWVudAoKTGluZ29MaXZlIEFJIGlzIGRlcGxveWVkIG9uICoqUmVuZGVyKiosIHJ1bm5pbmcgdGhlIGJ1bmRsZWQgRXhwcmVzcyBzZXJ2ZXIgKGBkaXN0L3NlcnZlci5janNgKSB3aGljaCBzZXJ2ZXMgYm90aCB0aGUgYnVpbHQgVml0ZSBmcm9udGVuZCBhbmQgdGhlIEFQSS9XZWJTb2NrZXQgYmFja2VuZCBmcm9tIGEgc2luZ2xlIHByb2Nlc3MuCgoqKkxpdmUgYXBwOioqIFtodHRwczovL2xpbmdvbGl2ZS1haS5vbnJlbmRlci5jb21dKGh0dHBzOi8vbGluZ29saXZlLWFpLm9ucmVuZGVyLmNvbSkK
+# LingoLive AI — Real-Time AI Language Learning Partner
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-lingolive--ai.onrender.com-success?style=for-the-badge&logo=render)](https://lingolive-ai.onrender.com)
+
+> 🔗 **Live Demo:** [https://lingolive-ai.onrender.com](https://lingolive-ai.onrender.com)
+
+**LingoLive AI** is a full-stack, AI-powered language learning platform that pairs learners with a live conversational AI partner across nine languages. It combines real-time voice conversation, structured CEFR-based progression (A0 through C1), and a full suite of practice modes (speaking, listening, reading, writing, and pronunciation) into one learning experience.
+
+Rather than static lessons, LingoLive AI generates scenarios, exams, stories, and feedback on the fly using Google's Gemini models, then tracks each learner's progress, streaks, and vocabulary in a persistent Supabase-backed profile.
+
+---
+
+## Key Highlights & Architecture
+
+* **Live Voice Conversation Partner:** A WebSocket-driven (`/ws/live`) real-time voice session powered by Gemini's live audio model, letting learners hold a spoken conversation with an AI partner instead of typing.
+* **CEFR-Aligned Progression System:** Learners move through six proficiency levels (A0 to C1), unlocking new levels through promotion exams and required practice counts tracked per level.
+* **Five Structured Practice Modes:** Dedicated studios for Speaking, Listening, Reading, Writing, and Phonetics, each with its own Gemini-generated content endpoint.
+* **AI-Generated Content:** Practice scenarios, mock exams, reading passages, listening prompts, stories, pronunciation feedback, and word lookups are all generated dynamically per request rather than hard-coded.
+* **Multi-Model Fallback:** A custom retry-and-fallback wrapper cycles through multiple Gemini text models on rate limits or high-demand errors, so generation stays reliable under load.
+* **Streaks & Gamification:** A streak manager with daily check-ins, streak freezes, milestone rewards, and celebration modals to keep learners coming back.
+* **Persistent Learner Profiles:** Supabase (PostgreSQL) stores user profiles, saved vocabulary, and exam history, with email/OTP-based authentication handled server-side.
+* **Text-to-Speech & Transcription:** A server-side TTS endpoint for AI response playback (`POST /api/tts`); voice input in the practice modes goes through the browser Web Speech API, with a server-side `/api/transcribe` endpoint available.
+
+---
+
+## Tech Stack & Technologies Used
+
+### Frontend
+* **Core Framework:** React 19, TypeScript
+* **Build Tooling:** Vite, Bun
+* **Styling & Animation:** Tailwind CSS (v4), Framer Motion (`motion`)
+* **UI & Feedback:** Lucide React icons, Recharts (progress dashboards), Canvas Confetti (celebrations)
+
+### Backend & AI Orchestration
+* **Server:** Express (TypeScript, run via `tsx`), bundled with esbuild for production
+* **Real-Time Layer:** `ws` (WebSocket Server) for the live voice partner session
+* **AI Provider:** Google Gemini (`@google/genai`) — text generation, live audio, TTS, and transcription across multiple fallback models
+* **Auth & Email:** Nodemailer with Brevo (Sendinblue) SMTP for OTP-based signup and verification
+* **Database & Auth:** Supabase (PostgreSQL)
+* **Deployment:** Render
+
+---
+
+## Comprehensive System Architecture
+
+```text
+lingolive-ai/
+│
+├── server.ts                       # Express + WebSocket server, all Gemini API orchestration
+├── supabase_schema.sql             # Postgres schema: user_profiles, saved_vocabulary, exam_history
+├── vite.config.ts                  # Vite build configuration
+│
+└── src/
+    ├── App.tsx                     # Main app shell, view routing, and global learner state
+    ├── main.tsx                    # React client entrypoint
+    ├── types.ts                    # Global TypeScript interfaces
+    ├── index.css                   # Global styles and Tailwind directives
+    │
+    ├── components/                 # [UI Tier]
+    │   ├── Header.tsx               # Navigation and language/level switcher
+    │   ├── LiveVoicePartner.tsx     # Real-time WebSocket voice conversation UI
+    │   ├── InteractiveChat.tsx      # Text-based conversational practice
+    │   ├── AIVoiceSphere.tsx        # Animated voice-activity visualizer
+    │   ├── AuthModal.tsx            # OTP-based sign up / sign in flow
+    │   ├── ScenarioSelectorModal.tsx# Scenario picker for guided practice
+    │   ├── PronunciationCoachModal.tsx # AI pronunciation scoring and feedback
+    │   ├── WordLookupModal.tsx      # On-demand AI dictionary/word lookup
+    │   ├── VocabularyDeckModal.tsx  # Saved vocabulary review deck
+    │   ├── SessionSummaryModal.tsx  # End-of-session AI performance recap
+    │   ├── MockTestExamView.tsx     # Full AI-generated mock exams
+    │   ├── PromotionExamModal.tsx   # Level-up gating exam
+    │   ├── PerformanceDashboardView.tsx # Recharts-based progress analytics
+    │   ├── LearningHubView.tsx      # Central navigation hub for practice modes
+    │   ├── StreakModal.tsx / StreakCelebrationModal.tsx # Gamified streak tracking
+    │   ├── BeginnerFoundationsModal.tsx # A0 onboarding content
+    │   ├── GlassBackground.tsx      # Ambient UI background
+    │   │
+    │   └── practice/                # [Dedicated Practice Studios]
+    │       ├── SpeakingPracticeView.tsx
+    │       ├── ListeningPracticeView.tsx
+    │       ├── ReadingPracticeView.tsx
+    │       ├── WritingPracticeView.tsx
+    │       ├── PhoneticsStudioView.tsx
+    │       └── StoryReaderModal.tsx
+    │
+    ├── data/                       # [Static Reference Data]
+    │   ├── languages.ts             # 9 supported languages, AI partner personas, scenarios
+    │   ├── levelProgression.ts      # CEFR level order, unlock rules, required practice counts
+    │   ├── levelGreetings.ts        # Per-level onboarding greetings
+    │   ├── cefrStories.ts           # Seed story content by level
+    │   ├── mockExams.ts             # Mock exam scaffolding
+    │   └── dictionary.ts            # Local dictionary fallback data
+    │
+    ├── services/                    # [Client-Side Data Layer]
+    │   └── progressDatabase.ts      # Supabase read/write for profiles, exams, vocabulary
+    │
+    ├── lib/
+    │   └── supabase.ts              # Supabase client initialization
+    │
+    └── utils/                       # [Core Utilities]
+        ├── streakManager.ts         # Streak, milestone, and check-in logic
+        └── audio.ts                 # Audio playback/recording helpers
+```
+
+---
+
+##  API Surface (Express Server)
+
+All AI generation and account logic runs server-side so the Gemini API key is never exposed to the client.
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/chat` | Core conversational language coaching |
+| `POST /api/tts` | Text-to-speech playback of AI responses |
+| `POST /api/transcribe` | Speech-to-text transcription of learner audio |
+| `POST /api/generate-scenario` | AI-generated practice scenarios |
+| `POST /api/pronunciation-feedback` | Pronunciation scoring and correction |
+| `POST /api/word-lookup` | On-demand AI dictionary lookups |
+| `POST /api/session-summary` | End-of-session performance recap |
+| `POST /api/generate-mock-test` / `evaluate-mock-test` | Full mock exam generation and grading |
+| `POST /api/evaluate-writing` | AI-graded writing feedback |
+| `POST /api/generate-story` | Level-appropriate AI-generated stories |
+| `POST /api/generate-phonetics-drill` | Phonetics practice drills |
+| `POST /api/generate-reading-passage` / `/api/generate-listening-scenario` / `/api/generate-speaking-prompt` / `/api/generate-writing-prompt` | Per-skill practice content generation |
+| `POST /api/auth/send-otp` / `/api/auth/verify-otp-and-signup` / `/api/auth/signup` / `/api/auth/signin` | Email OTP authentication flow |
+| `GET/POST /api/profile` | Learner profile read/write |
+| `WS /ws/live` | Real-time live voice conversation session |
+
+---
+
+## Supported Languages
+
+Spanish · French · Japanese · German · Italian · Mandarin Chinese · Portuguese · Korean · English
+
+Each language ships with a dedicated AI partner persona, native sample phrases, and speech-locale configuration for text-to-speech and transcription.
+
+---
+
+
+##  Getting Started
+
+### Prerequisites
+
+* Node.js 18+ (or [Bun](https://bun.sh))
+* A Google Gemini API key — get one free at [Google AI Studio](https://aistudio.google.com/apikey)
+* (Optional) A Supabase project for persistent profiles, saved vocabulary, and exam history
+* (Optional) A Brevo account for OTP signup emails
+
+### 1. Install dependencies
+
+```bash
+npm install        # or: bun install
+```
+
+### 2. Configure environment variables
+
+Copy the example file and fill in your keys:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `GEMINI_API_KEY` | ✅ Yes | Powers all AI generation, live voice, TTS, and transcription |
+| `SUPABASE_URL` / `VITE_SUPABASE_URL` | No | Enables persistent profiles, saved vocabulary, exam history |
+| `SUPABASE_SERVICE_ROLE_KEY` (or `SUPABASE_ANON_KEY`) | No | Server-side Supabase access |
+| `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | No | Client-side Supabase access |
+| `BREVO_API_KEY` (or `BREVO_KEY` / `SENDINBLUE_API_KEY`) | No | Sends OTP signup emails (falls back to Brevo SMTP relay) |
+| `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME` | No | Sender identity for OTP emails |
+
+Without Supabase or Brevo configured, the app still runs in guest mode with a local JSON profile store — those features degrade gracefully.
+
+### 3. Run it
+
+```bash
+npm run dev     # dev server at http://localhost:3000 (tsx + Vite)
+npm run build   # production bundle -> dist/
+npm start       # serve the production build (node dist/server.cjs)
+```
+
+A single Express process serves the Vite frontend, the API, and the WebSocket backend on port `3000`.
+
+---
+
+## 📦 Deployment
+
+LingoLive AI is deployed on **Render**, running the bundled Express server (`dist/server.cjs`) which serves both the built Vite frontend and the API/WebSocket backend from a single process.
+
+**Live app:** [https://lingolive-ai.onrender.com](https://lingolive-ai.onrender.com)
