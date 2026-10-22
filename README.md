@@ -6,7 +6,7 @@
 
 **LingoLive AI** is a full-stack, AI-powered language learning platform that pairs learners with a live conversational AI partner across nine languages. It combines real-time voice conversation, structured CEFR-based progression (A0 through C1), and a full suite of practice modes (speaking, listening, reading, writing, and pronunciation) into one learning experience.
 
-Rather than static lessons, LingoLive AI generates scenarios, exams, stories, and feedback on the fly using Google's Gemini models, then tracks each learner's progress, streaks, and vocabulary in a persistent Supabase-backed profile.
+Rather than static lessons, LingoLive AI generates scenarios, exams, stories, and feedback on the fly using Google's Gemini models, then tracks each learner's progress, streaks, and vocabulary in a persistent learner profile (stored locally and on the server, with optional Supabase sync).
 
 ---
 
@@ -18,7 +18,7 @@ Rather than static lessons, LingoLive AI generates scenarios, exams, stories, an
 * **AI-Generated Content:** Practice scenarios, mock exams, reading passages, listening prompts, stories, pronunciation feedback, and word lookups are all generated dynamically per request rather than hard-coded.
 * **Multi-Model Fallback:** A custom retry-and-fallback wrapper cycles through multiple Gemini text models on rate limits or high-demand errors, so generation stays reliable under load.
 * **Streaks & Gamification:** A streak manager with daily check-ins, streak freezes, milestone rewards, and celebration modals to keep learners coming back.
-* **Persistent Learner Profiles:** Supabase (PostgreSQL) stores user profiles, saved vocabulary, and exam history, with email/OTP-based authentication handled server-side.
+* **Persistent Learner Profiles:** profiles, saved vocabulary, and exam history persist in local storage and the server's profile store, with optional Supabase (PostgreSQL) sync; email/OTP-based authentication is handled server-side.
 * **Text-to-Speech & Transcription:** A server-side TTS endpoint for AI response playback (`POST /api/tts`); voice input in the practice modes goes through the browser Web Speech API, with a server-side `/api/transcribe` endpoint available.
 
 ---
@@ -36,7 +36,7 @@ Rather than static lessons, LingoLive AI generates scenarios, exams, stories, an
 * **Real-Time Layer:** `ws` (WebSocket Server) for the live voice partner session
 * **AI Provider:** Google Gemini (`@google/genai`) — text generation, live audio, TTS, and transcription across multiple fallback models
 * **Auth & Email:** Nodemailer with Brevo (Sendinblue) SMTP for OTP-based signup and verification
-* **Database & Auth:** Supabase (PostgreSQL)
+* **Database & Auth:** server-side OTP auth; Supabase (PostgreSQL) optional sync
 * **Deployment:** Render
 
 ---
