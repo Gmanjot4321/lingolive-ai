@@ -590,7 +590,7 @@ export const LearningHubView: React.FC<LearningHubViewProps> = ({
               </span>
             </div>
             <p className="text-xs text-pink-200/70">
-              Thousands of CEFR Stories, Phonetics Studio, Masterclasses & Skill Labs
+              CEFR Stories, Phonetics Studio, Masterclasses & Skill Labs
             </p>
           </div>
         </div>
